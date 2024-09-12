@@ -62,7 +62,7 @@ Follow these steps to set up the project on your local machine:
 
 7. **Run the application**
    ```
-   flask run
+   flask --debug run
    ```
 
 8. **Access the application**
