@@ -3,25 +3,33 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{% block title %}Csomagelosztó Alkalmazás{% endblock %}</title>
+    <title>{% block title %}BoxNinja{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('main.index') }}">Csomagelosztó</a>
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">BoxNinja</a>
         <div class="navbar-nav">
             {% if current_user.is_authenticated %}
                 <a class="nav-item nav-link" href="{{ url_for('package.list') }}">Csomagok</a>
                 <a class="nav-item nav-link" href="{{ url_for('courier.list') }}">Futárok</a>
                 <a class="nav-item nav-link" href="{{ url_for('warehouse.list') }}">Raktárak</a>
-                <a class="nav-item nav-link" href="{{ url_for('user.logout') }}">Kijelentkezés</a>
+                <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Kijelentkezés</a>
             {% else %}
-                <a class="nav-item nav-link" href="{{ url_for('user.login') }}">Bejelentkezés</a>
+                <a class="nav-item nav-link" href="{{ url_for('auth.login') }}">Bejelentkezés</a>
+                <a class="nav-item nav-link" href="{{ url_for('auth.register') }}">Regisztráció</a>
             {% endif %}
         </div>
     </nav>
     <main class="container mt-4">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
         {% block content %}{% endblock %}
     </main>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -17,12 +17,13 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
 
-    from app.routes import main, package, courier, warehouse, user
+    from app.routes import main, package, courier, warehouse, user, auth
     app.register_blueprint(main.bp)
     app.register_blueprint(package.bp)
     app.register_blueprint(courier.bp)
     app.register_blueprint(warehouse.bp)
     app.register_blueprint(user.bp)
+    app.register_blueprint(auth.bp)
 
     return app
 
