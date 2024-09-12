@@ -1,5 +1,11 @@
 # BoxNinja Webapp
 
+## Database
+
+<img src="./docs/db.png" />
+
+---
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed on your computer:
