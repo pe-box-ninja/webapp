@@ -1,0 +1,87 @@
+// Adatmodell
+
+// csomagok
+Table packages {
+  id integer [primary key]
+  tracking_number varchar
+  status varchar
+  weight float
+  dimensions varchar
+  sender_address text
+  recipient_address text
+  delivery_deadline timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+// futárok
+Table couriers {
+  id integer [primary key]
+  name varchar
+  email varchar
+  phone varchar
+  status varchar
+  current_location varchar
+  working_hours varchar
+  capacity float
+  created_at timestamp
+  updated_at timestamp
+}
+
+// telephelyek
+Table warehouses {
+  id integer [primary key]
+  name varchar
+  address text
+  capacity integer
+  current_load integer
+  created_at timestamp
+  updated_at timestamp
+}
+
+// csomagautomaták (ha van)
+Table parcel_lockers {
+  id integer [primary key]
+  location varchar
+  address text
+  total_compartments integer
+  available_compartments integer
+  created_at timestamp
+  updated_at timestamp
+}
+
+// A csomagok kiosztását kezeli a futárok,
+// raktárak és csomagautomaták között
+Table assignments {
+  id integer [primary key]
+  package_id integer
+  courier_id integer
+  warehouse_id integer
+  parcel_locker_id integer
+  status varchar
+  assigned_at timestamp
+  completed_at timestamp
+}
+
+enum user_role {
+  admin  // mindent kezelhet
+  warehouse  // csomag, raktár és futár hozzáférés
+  courier  // csomag, raktár és csomagautomata hozzáférés
+  guest // csomag információk a csomag trackeléshez
+}
+
+// felhasználók
+Table users {
+  id integer [primary key]
+  username varchar
+  email varchar
+  password_hash varchar
+  role user_role
+  created_at timestamp
+  updated_at timestamp
+}
+
+Ref: assignments.package_id > packages.id
+Ref: assignments.courier_id > couriers.id
+Ref: assignments.warehouse_id > warehouses.id
+Ref: assignments.parcel_locker_id > parcel_lockers.id
