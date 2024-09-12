@@ -4,8 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}BoxNinja{% endblock %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <!--[if IE]><link rel="shortcut icon" href="{{ url_for('static', filename='logo.png') }}"><![endif]-->
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
