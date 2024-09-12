@@ -2,12 +2,13 @@ from app import create_app, db
 from app.models import User, Package, Courier, Warehouse, ParcelLocker, Assignment
 from faker import Faker
 import random
-from datetime import datetime, timedelta
+
+from constants import MASTER_PASSWORD, MASTER_ADMIN_PASSWORD
 
 fake = Faker()
 
 def seed_users(num_users=50):
-    roles = ['admin', 'warehouse', 'courier', 'guest']
+    roles = ['warehouse', 'courier', 'guest']
 
     # Create the admin users
     admins = [
@@ -28,7 +29,7 @@ def seed_users(num_users=50):
         )
     ]
     for admin in admins:
-        admin.set_password('adminpassword')
+        admin.set_password(MASTER_ADMIN_PASSWORD)
         db.session.add(admin)
 
     for _ in range(num_users):
@@ -37,17 +38,7 @@ def seed_users(num_users=50):
             email=fake.email(),
             role=random.choice(roles)
         )
-        user.set_password(fake.password())
-        db.session.add(user)
-    db.session.commit()
-
-    for _ in range(num_users):
-        user = User(
-            username=fake.user_name(),
-            email=fake.email(),
-            role=random.choice(roles)
-        )
-        user.set_password(fake.password())
+        user.set_password(MASTER_PASSWORD)
         db.session.add(user)
     db.session.commit()
 

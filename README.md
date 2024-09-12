@@ -51,6 +51,7 @@ Follow these steps to set up the project on your local machine:
    flask db init
    flask db migrate
    flask db upgrade
+   python seed.py  # fill database with random data
    ```
 
 6. **Create a `.env` file**
