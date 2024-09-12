@@ -3,8 +3,7 @@ from flask_login import login_required, current_user
 
 bp = Blueprint('courier', __name__)
 
-@bp.route('/')
-@bp.route('/index')
+@bp.route('/list')
 @login_required
-def index():
-    return render_template('index.html', title='Home')
+def list():
+    return render_template('courier/list.html', title='Couriers')

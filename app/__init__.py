@@ -18,12 +18,12 @@ def create_app(config_class=Config):
     login.init_app(app)
 
     from app.routes import main, package, courier, warehouse, user, auth
-    app.register_blueprint(main.bp)
-    app.register_blueprint(package.bp)
-    app.register_blueprint(courier.bp)
-    app.register_blueprint(warehouse.bp)
-    app.register_blueprint(user.bp)
-    app.register_blueprint(auth.bp)
+    app.register_blueprint(main.bp, url_prefix='/')
+    app.register_blueprint(auth.bp, url_prefix='/')
+    app.register_blueprint(package.bp, url_prefix='/package')
+    app.register_blueprint(courier.bp, url_prefix='/courier')
+    app.register_blueprint(warehouse.bp, url_prefix='/warehouse')
+    app.register_blueprint(user.bp, url_prefix='/user')
 
     return app
 
