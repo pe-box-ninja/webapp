@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% import 'design-system.html' as design with context %}
+
+{% block content %}
+<div class="container mt-4">
+    {{ design.heading("BoxNinja Design System Showcase", 1) }}
+    <div class="section mb-4">
+        {{ design.heading("Typography", 2) }}
+        {{ design.heading("Heading 1", 1) }}
+        {{ design.heading("Heading 2", 2) }}
+        {{ design.heading("Heading 3", 3) }}
+        {{ design.heading("Heading 4", 4) }}
+        {{ design.heading("Heading 5", 5) }}
+        {{ design.heading("Heading 6", 6) }}
+        <p>This is a paragraph of text. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in dui mauris.</p>
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Buttons", 2) }}
+        <div class="d-flex justify-content-between">
+            {{ design.button("Primary Button", class="btn-primary") }}
+            {{ design.button("Secondary Button", class="btn-secondary") }}
+            {{ design.button("Success Button", class="btn-success") }}
+            {{ design.button("Danger Button", class="btn-danger") }}
+        </div>
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Cards", 2) }}
+        <div class="row">
+            <div class="col-md-4">
+                {{ design.card(
+                    title="Package Tracking",
+                    content="Track your package in real-time with our advanced tracking system.",
+                    footer=design.button("Track Now", class="btn-primary")
+                ) }}
+            </div>
+            <div class="col-md-4">
+                {{ design.card(
+                    title="Warehouse Management",
+                    content="Efficiently manage your warehouse with our smart inventory system.",
+                    footer=design.button("Learn More", class="btn-secondary")
+                ) }}
+            </div>
+            <div class="col-md-4">
+                {{ design.card(
+                    title="Route Optimization",
+                    content="Optimize delivery routes with our AI-powered algorithm.",
+                    footer=design.button("Optimize", class="btn-success")
+                ) }}
+            </div>
+        </div>
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Forms", 2) }}
+        {{ design.form_field(label="Username", name="username") }}
+        {{ design.form_field(label="Email", name="email", type="email") }}
+        {{ design.form_field(label="Password", name="password", type="password") }}
+        {{ design.button("Submit", class="btn-primary") }}
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Tables", 2) }}
+        {{ design.table(
+            headers=["ID", "Package", "Status", "Estimated Delivery"],
+            rows=[
+                [1, "BOX123456", "In Transit", "2024-09-15"],
+                [2, "BOX789012", "Delivered", "2024-09-12"],
+                [3, "BOX345678", "Processing", "2024-09-18"]
+            ]
+        ) }}
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Pagination", 2) }}
+        {{ design.pagination(page=3, total_pages=5, endpoint='main.index') }}
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Progress Bars", 2) }}
+        <div class="progress">
+            <div
+                class="progress-bar"
+                role="progressbar"
+                style="width: 75%;"
+                aria-valuenow="75"
+                aria-valuemin="0"
+                aria-valuemax="100"
+            >75% Complete</div>
+        </div>
+        <div class="progress">
+            <div
+                class="progress-bar"
+                role="progressbar"
+                style="width: 30%;"
+                aria-valuenow="30"
+                aria-valuemin="0"
+                aria-valuemax="100"
+            >30% Complete</div>
+        </div>
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Alerts", 2) }}
+        {{ design.alert("This is an info alert.", type="info") }}
+        {{ design.alert("This is a success alert.", type="success") }}
+        {{ design.alert("This is a warning alert.", type="warning") }}
+        {{ design.alert("This is a danger alert.", type="danger") }}
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Badges", 2) }}
+        {{ design.badge("New", type="primary") }}
+        {{ design.badge("Urgent", type="danger") }}
+        {{ design.badge("Completed", type="success") }}
+        {{ design.badge("In Progress", type="warning") }}
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Icons", 2) }}
+        <div class="d-flex justify-content-between align-items-center">
+            {{ design.icon("box") }}
+            {{ design.icon("truck", size="2x") }}
+            {{ design.icon("warehouse", size="3x") }}
+            {{ design.icon("user", size="4x") }}
+        </div>
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Modals", 2) }}
+        {{ design.button("Open Modal", class="btn-primary", data_target="exampleModal") }}
+        {{ design.modal(
+            id="exampleModal",
+            title="Example Modal",
+            content="This is an example modal content.",
+            footer=design.button("Close", class="btn-secondary")
+        ) }}
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Tooltips", 2) }}
+        {{ design.tooltip("Hover me", "This is a tooltip content") }}
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Tabs", 2) }}
+        {{ design.tabs([
+            {"id": "tab1", "title": "Tab 1", "content": "This is the content of Tab 1"},
+            {"id": "tab2", "title": "Tab 2", "content": "This is the content of Tab 2"},
+            {"id": "tab3", "title": "Tab 3", "content": "This is the content of Tab 3"}
+        ]) }}
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Accordion", 2) }}
+        {{ design.accordion([
+            {"title": "Section 1", "content": "Content for Section 1"},
+            {"title": "Section 2", "content": "Content for Section 2"},
+            {"title": "Section 3", "content": "Content for Section 3"}
+        ]) }}
+    </div>
+    <div class="section mb-4">
+        {{ design.heading("Timeline", 2) }}
+        {{ design.timeline([
+            {"icon": "box", "title": "Package Received", "date": "2024-09-10", "content": "Package received at sorting facility"},
+            {"icon": "truck", "title": "In Transit", "date": "2024-09-12", "content": "Package en route to destination"},
+            {"icon": "home", "title": "Delivered", "date": "2024-09-15", "content": "Package successfully delivered"}
+        ]) }}
+    </div>
+</div>
+{% endblock %}

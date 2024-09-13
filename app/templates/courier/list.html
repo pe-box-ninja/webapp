@@ -1,6 +1,32 @@
 {% extends "base.html" %}
-
 {% block content %}
-    <h1>Couriers</h1>
-    <p>This is where the list of couriers will be displayed.</p>
+<div class="container">
+    <h1 class="mb-4">Futárok</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Azonosító</th>
+                <th>Név</th>
+                <th>Email</th>
+                <th>Státusz</th>
+                <th>Műveletek</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for courier in couriers %}
+            <tr>
+                <td>{{ courier.id }}</td>
+                <td>{{ courier.name }}</td>
+                <td>{{ courier.email }}</td>
+                <td>{{ courier.status }}</td>
+                <td>
+                    <a href="{{ url_for('courier.view', id=courier.id) }}" class="btn btn-sm btn-primary">Megtekintés</a>
+                    <a href="{{ url_for('courier.edit', id=courier.id) }}" class="btn btn-sm btn-secondary">Szerkesztés</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('courier.create') }}" class="btn btn-success">Új futár hozzáadása</a>
+</div>
 {% endblock %}

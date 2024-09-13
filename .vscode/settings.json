@@ -1,3 +1,15 @@
 {
   "editor.formatOnSave": true,
+  "[html]": {
+    "editor.defaultFormatter": "NikolaosGeorgiou.html-fmt-vscode",
+    "editor.formatOnSave": true
+  },
+  "[css]": {
+    "editor.defaultFormatter": "aeschli.vscode-css-formatter",
+    "editor.formatOnSave": true
+  },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  }
 }

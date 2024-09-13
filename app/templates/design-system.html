@@ -1,0 +1,234 @@
+{# design_system.html #}
+
+{% macro button(text, href="#", class="", icon="", data_target="") %}
+<a href="{{ href }}" class="btn {{ class }}">
+    {% if icon %}
+    <span class="icon">{{ icon | safe }}</span>
+    {% endif %}
+    {{ text }}
+</a>
+{% endmacro %}
+
+{% macro card(title, content, footer="") %}
+<div class="card">
+    <div class="card-header">{{ title }}</div>
+    <div class="card-body">{{ content }}</div>
+    {% if footer %}
+    <div class="card-footer">{{ footer }}</div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro form_field(label, name, type="text", value="", errors=[]) %}
+<div class="form-group">
+    <label for="{{ name }}" class="form-label">{{ label }}</label>
+    <input
+        type="{{ type }}"
+        id="{{ name }}"
+        name="{{ name }}"
+        value="{{ value }}"
+        class="form-control{% if errors %} is-invalid{% endif %}"
+    >
+    {% if errors %}
+    <div class="invalid-feedback">
+        {% for error in errors %}
+        <span>{{ error }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro table(headers, rows) %}
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                {% for header in headers %}
+                <th>{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                {% for cell in row %}
+                <td>{{ cell }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endmacro %}
+
+{% macro pagination(page, total_pages, endpoint) %}
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item {% if page == 1 %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for(endpoint, page=page-1) if page > 1 else '#' }}">
+                <span class="icon">&#x2190;</span> Previous
+            </a>
+        </li>
+        {% set start = [page - 2, 1] | max %}
+        {% set end = [start + 4, total_pages] | min %}
+        {% if start > 1 %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for(endpoint, page=1) }}">1</a>
+            </li>
+            {% if start > 2 %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+        {% endif %}
+        {% for p in range(start, end + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for(endpoint, page=p) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        {% if end < total_pages %}
+            {% if end < total_pages - 1 %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% endif %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for(endpoint, page=total_pages) }}">{{ total_pages }}</a>
+            </li>
+        {% endif %}
+        <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for(endpoint, page=page+1) if page < total_pages else '#' }}">
+                Next <span class="icon">&#x2192;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+{% endmacro %}
+
+{% macro progress_bar(value, max=100, label="") %}
+{% set width = ((value|float / max|float) * 100)|round(2) %}
+<div class="progress">
+    <div class="progress-bar" role="progressbar"
+    width="{{ width }}%"
+    aria-valuenow="{{ value }}" aria-valuemin="0" aria-valuemax="{{ max }}">
+        <span>{% if label %}{{ label }}{% else %}{{ width }}%{% endif %}</span>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro heading(text, level=1) %}
+<h{{ level }} class="heading-{{ level }}">{{ text }}</h{{ level }}>
+{% endmacro %}
+
+{% macro alert(message, type="info") %}
+<div class="alert alert-{{ type }}" role="alert">
+    {{ message }}
+</div>
+{% endmacro %}
+
+{% macro badge(text, type="primary") %}
+<span class="badge badge-{{ type }}">{{ text }}</span>
+{% endmacro %}
+
+{% macro icon(name, size="1x", spin=false) %}
+<svg class="icon{% if spin %} icon-spin{% endif %}"
+    width="{{ size }}em" height="{{ size }}em"
+>
+    <use xlink:href="#icon-{{ name }}"></use>
+</svg>
+{% endmacro %}
+
+{% macro modal(id, title, content, footer="") %}
+<div class="modal" id="{{ id }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ title }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{ content }}
+            </div>
+            {% if footer %}
+            <div class="modal-footer">
+                {{ footer }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro loader() %}
+<div class="loader">
+    {{ icon('spinner', size=2, spin=true) }}
+</div>
+{% endmacro %}
+
+{% macro tooltip(text, content) %}
+<span class="tooltip" data-toggle="tooltip" title="{{ content }}">
+    {{ text }}
+</span>
+{% endmacro %}
+
+{% macro tabs(tabs) %}
+<div class="tabs">
+    <ul class="nav nav-tabs" role="tablist">
+        {% for tab in tabs %}
+        <li class="nav-item" role="presentation">
+            <a class="nav-link{% if loop.first %} active{% endif %}" id="{{ tab.id }}-tab" data-toggle="tab" href="#{{ tab.id }}" role="tab" aria-controls="{{ tab.id }}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                {{ tab.title }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="tab-content">
+        {% for tab in tabs %}
+        <div class="tab-pane fade{% if loop.first %} show active{% endif %}" id="{{ tab.id }}" role="tabpanel" aria-labelledby="{{ tab.id }}-tab">
+            {{ tab.content }}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endmacro %}
+
+{% macro accordion(items) %}
+<div class="accordion" id="accordion">
+    {% for item in items %}
+    <div class="card">
+        <div class="card-header" id="heading{{ loop.index }}">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="{% if loop.first %}true{% else %}false{% endif %}" aria-controls="collapse{{ loop.index }}">
+                    {{ item.title }}
+                </button>
+            </h2>
+        </div>
+        <div id="collapse{{ loop.index }}" class="collapse{% if loop.first %} show{% endif %}" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
+            <div class="card-body">
+                {{ item.content }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro timeline(events) %}
+<div class="timeline">
+    {% for event in events %}
+    <div class="timeline-item">
+        <div class="timeline-badge">
+            {{ icon(event.icon) }}
+        </div>
+        <div class="timeline-panel">
+            <div class="timeline-heading">
+                <h4 class="timeline-title">{{ event.title }}</h4>
+                <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> {{ event.date }}</small></p>
+            </div>
+            <div class="timeline-body">
+                <p>{{ event.content }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endmacro %}
