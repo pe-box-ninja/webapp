@@ -4,6 +4,7 @@ from werkzeug.urls import url_parse
 from app import db
 from app.models import User
 from app.forms import LoginForm, RegistrationForm
+from app.email import send_welcome_email, send_login_notification
 
 bp = Blueprint('auth', __name__)
 
@@ -18,6 +19,7 @@ def login():
             flash('Invalid username or password')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
+        send_login_notification(user)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('main.index')
@@ -39,6 +41,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+        send_welcome_email(user)
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', title='Register', form=form)
