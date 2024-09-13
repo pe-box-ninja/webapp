@@ -14,6 +14,8 @@ Before you begin, ensure you have the following installed on your computer:
 
 2. **Git**: You'll need Git to clone the repository. Download it from [git-scm.com](https://git-scm.com/downloads).
 
+3. **Docker**: You'll need Docker for free local e-mailing. Download it from [docker.com](https://www.docker.com/).
+
 ## Setup Instructions
 
 Follow these steps to set up the project on your local machine:
@@ -56,24 +58,27 @@ Follow these steps to set up the project on your local machine:
 
 6. **Create a `.env` file**
 
-   Copy the `.env.example` file and rename the copy to `.env` or:
-
-   Create a new file named `.env` in the project root directory and add the following content:
-   ```
-   FLASK_APP=run.py
-   FLASK_ENV=development
-   SECRET_KEY=your-secret-key
-   DATABASE_URL=sqlite:///app.db
-   ```
+   Copy the `.env.example` file and rename the copy to `.env`.
    Replace `your-secret-key` with a random string of characters.
 
-7. **Run the application**
+7. **Setup mailhog**
+   For the ability to send e-mails locally, we use mailhog with docker:
+   ```
+   docker-compose up -d
+   ```
+   You can access the e-mail interface at: `http://127.0.0.1:1025`
+
+8. **Run the application**
    ```
    flask --debug run
    ```
+   Alternatively, you can set an other port if needed:
+   ```
+   flask --debug run --port 3000
+   ```
 
-8. **Access the application**
-   Open a web browser and go to `http://localhost:5000`
+9.  **Access the application**
+   Open a web browser and go to `http://127.0.0.1:5000`
 
 ## Troubleshooting
 
