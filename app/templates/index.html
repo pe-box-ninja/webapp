@@ -1,5 +1,172 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoxNinja - Forradalmi Csomagkezelés</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <style>
+        .hero {
+            background-image: url("{{ url_for('static', filename='img/deliver.gif') }}");
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">BoxNinja</div>
+            <div class="nav-links">
+                <a href="#features">Funkciók</a>
+                <a href="#about">Rólunk</a>
+                <a href="#testimonials">Vélemények</a>
+                <a href="/login" class="cta-button">Bejelentkezés</a>
+            </div>
+        </nav>
+    </header>
 
-{% block content %}
-    <h1>Welcome</h1>
-{% endblock %}
+    <main>
+        <section class="hero">
+            <div class="animated-background">
+                <!-- Animated boxes -->
+            </div>
+            <div class="hero-content">
+                <h1>Forradalmi Csomagkezelés</h1>
+                <p>Optimalizálja logisztikáját a BoxNinja élvonalbeli megoldásával</p>
+                <a href="/register" class="cta-button">Kezdje el</a>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Funkcióink</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <i class="fas fa-truck feature-icon"></i>
+                    <h3>Valós idejű Nyomkövetés</h3>
+                    <p>Kövesse nyomon csomagjait valós időben fejlett nyomkövető rendszerünkkel.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-warehouse feature-icon"></i>
+                    <h3>Intelligens Raktározás</h3>
+                    <p>Optimalizálja tárolását intelligens raktárkezelési rendszerünkkel.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-route feature-icon"></i>
+                    <h3>Útvonal Optimalizálás</h3>
+                    <p>Csökkentse a kézbesítési időt AI-alapú útvonaltervezésünkkel.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line feature-icon"></i>
+                    <h3>Analitikai Irányítópult</h3>
+                    <p>Nyerjen betekintést működésébe átfogó elemzésekkel.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="{{ url_for('static', filename='img/package.gif') }}" alt="A BoxNinja-ról">
+                </div>
+                <div class="about-text">
+                    <h2>A BoxNinja-ról</h2>
+                    <p>A BoxNinja forradalmasítja a logisztikai iparágat csúcstechnológiás csomagkezelő rendszerével. Platformunk zökkenőmentesen integrálja a nyomkövetést, raktározást és kézbesítés optimalizálást, hogy átfogó megoldást nyújtson minden méretű vállalkozás számára.</p>
+                    <p>A BoxNinja segítségével optimalizálhatja működését, csökkentheti költségeit és javíthatja az ügyfelek elégedettségét. Csatlakozzon a logisztikai forradalomhoz még ma!</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials" class="testimonials">
+            <h2>Mit Mondanak Ügyfeleink</h2>
+            <div class="testimonial-slider">
+                <div class="testimonial active">
+                    <p class="testimonial-text">"A BoxNinja átalakította logisztikai működésünket. 30%-os hatékonyságnövekedést tapasztaltunk a rendszerük bevezetése óta."</p>
+                    <p class="testimonial-author">- Kovács János, a LogiTech vezérigazgatója</p>
+                </div>
+                <div class="testimonial">
+                    <p class="testimonial-text">"A valós idejű nyomkövetési funkció nagyban javította ügyfeleink elégedettségét. A BoxNinja igazi játékváltoztató!"</p>
+                    <p class="testimonial-author">- Nagy Éva, a FastShip operatív menedzsere</p>
+                </div>
+                <div class="testimonial">
+                    <p class="testimonial-text">"25%-kal csökkentettük kézbesítési időinket a BoxNinja útvonal-optimalizálásának köszönhetően. Nagyon ajánlom!"</p>
+                    <p class="testimonial-author">- Szabó Péter, a SpeedyDelivery logisztikai igazgatója</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 BoxNinja. Minden jog fenntartva.</p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Testimonial slider
+        const testimonials = document.querySelectorAll('.testimonial');
+        let currentTestimonial = 0;
+
+        function showNextTestimonial() {
+            testimonials[currentTestimonial].classList.remove('active');
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            testimonials[currentTestimonial].classList.add('active');
+        }
+
+        setInterval(showNextTestimonial, 5000);
+
+        // Animated background
+        const animatedBackground = document.querySelector('.animated-background');
+
+        function createAnimatedBox() {
+            const box = document.createElement('div');
+            box.classList.add('animated-box');
+            box.style.left = `${Math.random() * 100}%`;
+            box.style.width = `${Math.random() * 50 + 10}px`;
+            box.style.height = `${Math.random() * 50 + 10}px`;
+            box.style.animationDuration = `${Math.random() * 10 + 10}s`;
+            animatedBackground.appendChild(box);
+
+            box.addEventListener('animationend', () => {
+                box.remove();
+                createAnimatedBox();
+            });
+        }
+
+        // Create initial set of animated boxes
+        for (let i = 0; i < 10; i++) {
+            createAnimatedBox();
+        }
+
+        // Intersection Observer for feature cards
+        const featureCards = document.querySelectorAll('.feature-card');
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        featureCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(50px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
