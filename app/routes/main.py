@@ -10,13 +10,13 @@ bp = Blueprint("main", __name__)
 def index():
     if current_user.is_authenticated:
         return redirect(url_for("main.dashboard"))
-    return render_template("index.html", title="Home")
+    return render_template("index.html", title="Főoldal")
 
 
 @bp.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html", title="Dashboard")
+    return render_template("dashboard.html", title="Irányítópult")
 
 
 @bp.route("/admin")
@@ -25,7 +25,7 @@ def admin():
     if not current_user.is_admin():
         abort(403)  # Forbidden
     users = User.query.all()
-    return render_template("admin/index.html", title="Admin Panel", users=users)
+    return render_template("admin/index.html", title="Admin Irányítópult", users=users)
 
 
 @bp.route("/admin/design-system")

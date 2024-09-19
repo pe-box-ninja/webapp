@@ -19,7 +19,7 @@
 </div>
 {% endmacro %}
 
-{% macro form_field(label, name, type="text", value="", errors=[]) %}
+{% macro form_field(label, name, type="text", value="", placeholder="", errors=[]) %}
 <div class="form-group">
     <label for="{{ name }}" class="form-label">{{ label }}</label>
     <input
@@ -27,6 +27,7 @@
         id="{{ name }}"
         name="{{ name }}"
         value="{{ value }}"
+        placeholder="{{ placeholder }}"
         class="form-control{% if errors %} is-invalid{% endif %}"
     >
     {% if errors %}
@@ -127,12 +128,8 @@
 <span class="badge badge-{{ type }}">{{ text }}</span>
 {% endmacro %}
 
-{% macro icon(name, size="1x", spin=false) %}
-<svg class="icon{% if spin %} icon-spin{% endif %}"
-    width="{{ size }}em" height="{{ size }}em"
->
-    <use xlink:href="#icon-{{ name }}"></use>
-</svg>
+{% macro icon(name, size="", spin=false) %}
+<i class="fas fa-{{ name }}{% if size %} fa-{{ size }}{% endif %}{% if spin %} fa-spin{% endif %}"></i>
 {% endmacro %}
 
 {% macro modal(id, title, content, footer="") %}

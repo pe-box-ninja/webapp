@@ -1,11 +1,22 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
-from app import db
+from app.models import User
+from app.decorators import admin_required
 
 bp = Blueprint("admin", __name__)
 
 
-@bp.route("/index")
+@bp.route("/")
 @login_required
+@admin_required
 def index():
-    return render_template("admin/index.html", title="Admin Dashboard")
+    users = User.query.all()
+    return render_template("admin/index.html", title="Admin Dashboard", users=users)
+
+
+@bp.route("/users")
+@login_required
+@admin_required
+def users():
+    users = User.query.all()
+    return render_template("admin/users.html", title="User Management", users=users)
