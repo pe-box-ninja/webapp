@@ -4,11 +4,16 @@
 {% block content %}
 <div class="container mt-5">
     <div class="card">
-        <div class="card-header">Csomagkövetés</div>
+        <div class="card-header">
+            Csomagkövetés
+        </div>
         <div class="card-body">
-            <form method="post" class="mt-4">
+            <form method="post">
                 <div class="mb-3">
-                    <label for="tracking_number" class="form-label">Csomagszám</label>
+                    <label for="tracking_number" class="form-label">
+                        <i class="fas fa-barcode mr-1"></i>
+                        Csomagszám
+                    </label>
                     <input
                         type="text"
                         class="form-control"

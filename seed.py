@@ -1,5 +1,13 @@
 from app import create_app, db
-from app.models import User, Package, Courier, Warehouse, ParcelLocker, Assignment
+from app.models import (
+    User,
+    Package,
+    Courier,
+    Warehouse,
+    ParcelLocker,
+    Assignment,
+    PackageStatus,
+)
 from faker import Faker
 import random
 
@@ -21,6 +29,15 @@ def seed_users(num_users=50):
         admin.set_password(MASTER_ADMIN_PASSWORD)
         db.session.add(admin)
 
+    test_users = [
+        User(username="raktar", email="warehouse@boxninja.com", role="warehouse"),
+        User(username="futar", email="courier@boxninja.com", role="courier"),
+        User(username="vendeg", email="guest@boxninja.com", role="guest"),
+    ]
+    for test_user in test_users:
+        test_user.set_password(MASTER_PASSWORD)
+        db.session.add(test_user)
+
     for _ in range(num_users):
         user = User(
             username=fake.user_name(), email=fake.email(), role=random.choice(roles)
@@ -31,7 +48,7 @@ def seed_users(num_users=50):
 
 
 def seed_packages(num_packages=100):
-    statuses = ["függőben", "szállítás alatt", "kézbesítve", "visszaküldve"]
+    statuses = PackageStatus.list()
     for tracking_number in range(num_packages):
         package = Package(
             tracking_number=f"bn{tracking_number}",

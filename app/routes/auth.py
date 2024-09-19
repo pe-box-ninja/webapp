@@ -17,7 +17,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash("Invalid username or password")
+            flash("Helytelen felhasználónév vagy jelszó!")
             return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
         send_login_notification(user)
@@ -28,7 +28,7 @@ def login():
             else:
                 next_page = url_for("main.dashboard")
         return redirect(next_page)
-    return render_template("auth/login.html", title="Sign In", form=form)
+    return render_template("auth/login.html", title="Bejelentkezés", form=form)
 
 
 @bp.route("/logout")
@@ -48,6 +48,6 @@ def register():
         db.session.add(user)
         db.session.commit()
         send_welcome_email(user)
-        flash("Congratulations, you are now a registered user!")
+        flash("Sikeres regisztráció!")
         return redirect(url_for("auth.login"))
-    return render_template("auth/register.html", title="Register", form=form)
+    return render_template("auth/register.html", title="Regisztráció", form=form)

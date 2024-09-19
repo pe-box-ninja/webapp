@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, abort
 from flask_login import login_required, current_user
 from app.models import User
+from app.decorators import admin_required
 
 bp = Blueprint("main", __name__)
 
@@ -21,6 +22,7 @@ def dashboard():
 
 @bp.route("/admin")
 @login_required
+@admin_required
 def admin():
     if not current_user.is_admin():
         abort(403)  # Forbidden
@@ -30,6 +32,7 @@ def admin():
 
 @bp.route("/admin/design-system")
 @login_required
+@admin_required
 def secret_design_system():
     if not current_user.is_admin():
         abort(403)
