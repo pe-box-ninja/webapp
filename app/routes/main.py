@@ -17,7 +17,7 @@ def index():
 @bp.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html", title="Irányítópult")
+    return redirect(url_for("package.list"))
 
 
 @bp.route("/admin")

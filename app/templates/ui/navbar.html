@@ -23,12 +23,14 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
                 {% if current_user.is_authenticated and (current_user.is_warehouse() or current_user.is_admin() ) %}
+                <!--
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('main.dashboard') }}">
                         <i class="fas fa-tachometer-alt mr-1"></i>
                         Irányítópult
                     </a>
                 </li>
+                -->
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('package.list') }}">
                         <i class="fas fa-box mr-1"></i>
