@@ -7,13 +7,13 @@ bp = Blueprint("user", __name__)
 @bp.route("/list")
 @login_required
 def list():
-    return render_template("user/list.html", title="Users")
+    return render_template("user/list.html", title="Felhasználók")
 
 
 @bp.route("/profile")
 @login_required
 def profile():
-    return render_template("user/profile.html", title="User profile")
+    return render_template("user/profile.html", title="Profil")
 
 
 @bp.route("/settings")

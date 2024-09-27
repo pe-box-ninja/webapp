@@ -14,7 +14,7 @@ bp = Blueprint("package", __name__)
 @warehouse_required
 def list():
     packages = Package.query.all()
-    return render_template("package/list.html", title="Packages", packages=packages)
+    return render_template("package/list.html", title="Csomagok", packages=packages)
 
 
 @bp.route("/view/<int:id>")

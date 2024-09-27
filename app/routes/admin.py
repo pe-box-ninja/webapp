@@ -11,7 +11,7 @@ bp = Blueprint("admin", __name__)
 @admin_required
 def index():
     users = User.query.all()
-    return render_template("admin/index.html", title="Admin Dashboard", users=users)
+    return render_template("admin/index.html", title="Admin Kezelőpult", users=users)
 
 
 @bp.route("/users")
@@ -19,4 +19,4 @@ def index():
 @admin_required
 def users():
     users = User.query.all()
-    return render_template("admin/users.html", title="User Management", users=users)
+    return render_template("admin/users.html", title="Felhasználó kezelés", users=users)

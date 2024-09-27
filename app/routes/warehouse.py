@@ -12,5 +12,5 @@ bp = Blueprint("warehouse", __name__)
 def list():
     warehouses = Warehouse.query.all()
     return render_template(
-        "warehouse/list.html", title="Warehouses", warehouses=warehouses
+        "warehouse/list.html", title="Raktárak", warehouses=warehouses
     )

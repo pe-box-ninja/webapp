@@ -26,6 +26,9 @@ class User(UserMixin, db.Model):
     def is_admin(self):
         return self.role == "admin"
 
+    def is_courier(self):
+        return self.role == "courier"
+
     def is_warehouse(self):
         return self.role == "warehouse"
 

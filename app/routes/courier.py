@@ -12,7 +12,7 @@ bp = Blueprint("courier", __name__)
 @warehouse_required
 def list():
     couriers = Courier.query.all()
-    return render_template("courier/list.html", title="Couriers", couriers=couriers)
+    return render_template("courier/list.html", title="Futárok", couriers=couriers)
 
 
 @bp.route("/view/<int:id>")
@@ -20,7 +20,9 @@ def list():
 @warehouse_required
 def view(id):
     courier = Courier.query.get_or_404(id)
-    return render_template("courier/view.html", title="View Courier", courier=courier)
+    return render_template(
+        "courier/view.html", title="Futár információk", courier=courier
+    )
 
 
 @bp.route("/edit/<int:id>")
@@ -28,11 +30,13 @@ def view(id):
 @warehouse_required
 def edit(id):
     courier = Courier.query.get_or_404(id)
-    return render_template("courier/edit.html", title="Edit Courier", courier=courier)
+    return render_template(
+        "courier/edit.html", title="Futár módosítása", courier=courier
+    )
 
 
 @bp.route("/create")
 @login_required
 @warehouse_required
 def create():
-    return render_template("courier/create.html", title="Create Courier")
+    return render_template("courier/create.html", title="Futár létrehozása")
