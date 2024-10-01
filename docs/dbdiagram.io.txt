@@ -1,17 +1,29 @@
 // Adatmodell
 
+enum package_status {
+  pending // függőben
+  in_transit // szállítás alatt
+  return // visszaküldve  
+  delivered // kézbesítve
+}
+
 // csomagok
 Table packages {
   id integer [primary key]
   tracking_number varchar
-  status varchar
-  weight float
-  dimensions varchar
+  status package_status
+  weight float  // in kg / grams
   sender_address text
   recipient_address text
   delivery_deadline timestamp
   created_at timestamp
   updated_at timestamp
+}
+
+enum courier_status {
+  ready // indulásra kész
+  en_route // úton
+  time_off // pihenő
 }
 
 // futárok
@@ -20,10 +32,10 @@ Table couriers {
   name varchar
   email varchar
   phone varchar
-  status varchar
+  status courier_status
   current_location varchar
   working_hours varchar
-  capacity float
+  capacity float  // packages * 50x50x50
   created_at timestamp
   updated_at timestamp
 }
@@ -42,8 +54,8 @@ Table warehouses {
 // csomagautomaták (ha van)
 Table parcel_lockers {
   id integer [primary key]
-  location varchar
-  address text
+  address varchar
+  recipient_address text
   total_compartments integer
   available_compartments integer
   created_at timestamp
@@ -58,7 +70,6 @@ Table assignments {
   courier_id integer
   warehouse_id integer
   parcel_locker_id integer
-  status varchar
   assigned_at timestamp
   completed_at timestamp
 }
