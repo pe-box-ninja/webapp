@@ -1,0 +1,201 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-5">
+  <div class="jumbotron">
+    <h1 class="display-4">Futár Útvonal Optimalizálás</h1>
+    <p class="lead">
+      Ez egy példa szimuláció, amely bemutatja, hogyan optimalizálható egy futár
+      útvonala Veszprém városában. A kezdő pont a zöld, a bejárandó címek a
+      pirosak.
+    </p>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Útvonal Információ</h5>
+          <p class="card-text">
+            Összes cím:
+            <span id="totalAddresses" class="font-weight-bold"></span>
+          </p>
+          <p class="card-text">
+            Jelenlegi cím:
+            <span id="currentAddress" class="font-weight-bold"></span>
+          </p>
+          <p class="card-text">
+            Hátralévő címek:
+            <span id="remainingAddresses" class="font-weight-bold"></span>
+          </p>
+          <p class="card-text">
+            Teljes távolság:
+            <span id="totalDistance" class="font-weight-bold"></span> km
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Szimuláció Vezérlés</h5>
+          <button id="prevStep" class="btn btn-outline-primary mr-2" disabled>
+            Előző Lépés
+          </button>
+          <button id="nextStep" class="btn btn-primary">Következő Lépés</button>
+          <p class="mt-2 mb-0">
+            Lépés: <span id="stepCounter" class="font-weight-bold">0</span> /
+            <span id="totalSteps" class="font-weight-bold"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Távolság Számítások</h5>
+          <div id="distanceCalculations"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div id="map" style="height: 400px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">Hogyan működik?</h4>
+    <p>
+      Ez a szimuláció egy egyszerűsített példát mutat be a futár útvonal
+      optimalizálására Veszprémben, kezdve az Egyetem utcától. A színes pontok a
+      kézbesítési címeket jelölik, a piros vonal pedig az optimalizált útvonalat
+      mutatja. A távolságok kilométerben vannak megadva.
+    </p>
+    <p>
+      Használja a "Következő Lépés" és "Előző Lépés" gombokat a szimuláció
+      vezérléséhez és az útvonal vizualizálásához.
+    </p>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+/>
+
+<script>
+  const simulationData = {{ simulation_data | tojson | safe }};
+  let map, currentStep = 0;
+  let markers = [], pathLine, traversedPathLine;
+
+  function initMap() {
+    map = L.map('map', {
+      center: [47.0931, 17.9070],
+      zoom: 13,
+      zoomControl: false,
+      attributionControl: false
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // Címek hozzáadása markerekkel
+    simulationData.addresses.forEach((addr, index) => {
+      let markerColor = index === 0 ? '#00FF00' : '#FF6B6B';
+      let markerSize = index === 0 ? 20 : 14;
+      markers.push(L.circleMarker([addr.lat, addr.lon], {
+        radius: markerSize / 2,
+        fillColor: markerColor,
+        color: "#000",
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.8
+      }).bindPopup(`Cím ${index + 1}: ${addr.address}`).addTo(map));
+    });
+
+    pathLine = L.polyline([], {color: '#4A90E2', weight: 4, opacity: 0.7}).addTo(map);
+    traversedPathLine = L.polyline([], {color: '#FF6B6B', weight: 5, opacity: 0.9}).addTo(map);
+
+    updateVisualization();
+    document.getElementById('totalSteps').textContent = simulationData.optimal_route.length;
+    document.getElementById('totalAddresses').textContent = simulationData.addresses.length;
+  }
+
+  function updateVisualization() {
+    // Optimális útvonal frissítése
+    let routeCoords = simulationData.optimal_route.slice(0, currentStep + 1).map(addr => [addr.lat, addr.lon]);
+    pathLine.setLatLngs(routeCoords);
+
+    // Bejárt útvonal frissítése
+    let traversedCoords = simulationData.optimal_route.slice(0, currentStep).map(addr => [addr.lat, addr.lon]);
+    traversedPathLine.setLatLngs(traversedCoords);
+
+    // Jelenlegi csomópont markerének frissítése
+    markers.forEach((marker, index) => {
+      if (index === 0) return; // Skip the start marker
+      marker.setStyle({fillColor: '#FF6B6B'});
+    });
+    if (currentStep > 0) {
+      let currentAddr = simulationData.optimal_route[currentStep - 1];
+      let currentMarker = markers.find(m => m.getLatLng().lat === currentAddr.lat && m.getLatLng().lng === currentAddr.lon);
+      currentMarker.setStyle({fillColor: '#FFA500'});
+    }
+
+    // Információk frissítése
+    document.getElementById('currentAddress').textContent = currentStep > 0 ? simulationData.optimal_route[currentStep - 1].address : 'N/A';
+    document.getElementById('remainingAddresses').textContent = simulationData.optimal_route.length - currentStep;
+    document.getElementById('stepCounter').textContent = currentStep;
+
+    // Távolság számítások frissítése
+    updateDistanceCalculations();
+
+    // Gombok állapotának frissítése
+    document.getElementById('prevStep').disabled = currentStep === 0;
+    document.getElementById('nextStep').disabled = currentStep === simulationData.optimal_route.length;
+  }
+
+  function updateDistanceCalculations() {
+    const distanceCalc = document.getElementById('distanceCalculations');
+    if (currentStep === 0) {
+      distanceCalc.innerHTML = '<p>Kattintson a "Következő Lépés" gombra a szimuláció indításához.</p>';
+      document.getElementById('totalDistance').textContent = '0';
+    } else {
+      const step = simulationData.steps[currentStep - 1];
+      let html = `<h6>Jelenlegi cím: ${step.current}</h6>`;
+      html += '<ul>';
+      step.options.forEach(option => {
+        html += `<li>${option.address}: ${option.distance.toFixed(2)} km ${option.address === step.chosen ? '(választott)' : ''}</li>`;
+      });
+      html += '</ul>';
+      html += `<p>Választott cím: ${step.chosen}</p>`;
+      html += `<p>Távolság: ${step.distance.toFixed(2)} km</p>`;
+      distanceCalc.innerHTML = html;
+      document.getElementById('totalDistance').textContent = step.total_distance.toFixed(2);
+    }
+  }
+
+  document.getElementById('prevStep').addEventListener('click', () => {
+    if (currentStep > 0) {
+      currentStep--;
+      updateVisualization();
+    }
+  });
+
+  document.getElementById('nextStep').addEventListener('click', () => {
+    if (currentStep < simulationData.optimal_route.length) {
+      currentStep++;
+      updateVisualization();
+    }
+  });
+
+  // Térkép inicializálása az oldal betöltésekor
+  window.addEventListener('load', initMap);
+</script>
+{% endblock %}

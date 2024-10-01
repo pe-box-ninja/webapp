@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, abort
 from flask_login import login_required, current_user
 from app.models import User
 from app.decorators import admin_required
+from app.algo_viz import simulate_delivery
 
 bp = Blueprint("main", __name__)
 
@@ -31,9 +32,17 @@ def admin():
 
 
 @bp.route("/admin/design-system")
-@login_required
-@admin_required
 def secret_design_system():
     if not current_user.is_admin():
         abort(403)
     return render_template("admin/design-system.html", title="Design System")
+
+
+@bp.route("/algo")
+def algo_viz():
+    simulation_data = simulate_delivery()
+    return render_template(
+        "algo/algo.html",
+        title="Algoritmus Vizualizáció",
+        simulation_data=simulation_data,
+    )
