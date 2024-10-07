@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="jumbotron">
+    <h1 class="display-4">Courier route</h1>
+    <p class="lead">Optimize and visualize courier routes for package delivery.</p>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Route Information</h5>
+          <p class="card-text">
+            Total addresses: <span id="totalAddresses" class="font-weight-bold"></span>
+          </p>
+          <p class="card-text">
+            Current address: <span id="currentAddress" class="font-weight-bold"></span>
+          </p>
+          <p class="card-text">
+            Remaining addresses: <span id="remainingAddresses" class="font-weight-bold"></span>
+          </p>
+          <p class="card-text">
+            Total distance: <span id="totalDistance" class="font-weight-bold"></span> km
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Simulation Controls</h5>
+          <button id="prevStep" class="btn btn-outline-primary mr-2" disabled>Previous Step</button>
+          <button id="nextStep" class="btn btn-primary">Next Step</button>
+          <p class="mt-2 mb-0">Step: <span id="stepCounter" class="font-weight-bold">0</span> / <span id="totalSteps" class="font-weight-bold"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Distance Calculations</h5>
+          <div id="distanceCalculations"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div id="map" style="height: 400px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">How does it work?</h4>
+    <p>This simulation demonstrates courier route optimization with constraints such as vehicle capacity, working hours, and deadlines.</p>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+<script>
+  const simulationData = {{ simulation_data | tojson | safe }};
+  let map, currentStep = 0;
+  let markers = [], pathLine, traversedPathLine;
+
+  function initMap() {
+    map = L.map('map', {center: [47.0931, 17.9070], zoom: 13, zoomControl: false, attributionControl: false});
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {maxZoom: 19}).addTo(map);
+
+    simulationData.addresses.forEach((addr, index) => {
+      let markerColor = index === 0 ? '#00FF00' : '#FF6B6B';
+      let markerSize = index === 0 ? 20 : 14;
+      markers.push(L.circleMarker([addr.lat, addr.lon], {
+        radius: markerSize / 2, fillColor: markerColor, color: "#000", weight: 2, opacity: 1, fillOpacity: 0.8
+      }).bindPopup(`Address ${index + 1}: ${addr.address}`).addTo(map));
+    });
+
+    pathLine = L.polyline([], {color: '#4A90E2', weight: 4, opacity: 0.7}).addTo(map);
+    traversedPathLine = L.polyline([], {color: '#FF6B6B', weight: 5, opacity: 0.9}).addTo(map);
+    updateVisualization();
+    document.getElementById('totalSteps').textContent = simulationData.optimal_route.length;
+    document.getElementById('totalAddresses').textContent = simulationData.addresses.length;
+  }
+
+  function updateVisualization() {
+    let routeCoords = simulationData.optimal_route.slice(0, currentStep + 1).map(addr => [addr.lat, addr.lon]);
+    pathLine.setLatLngs(routeCoords);
+    let traversedCoords = simulationData.optimal_route.slice(0, currentStep).map(addr => [addr.lat, addr.lon]);
+    traversedPathLine.setLatLngs(traversedCoords);
+    markers.forEach((marker, index) => {
+      if (index === 0) return;
+      marker.setStyle({fillColor: '#FF6B6B'});
+    });
+    if (currentStep > 0) {
+      let currentAddr = simulationData.optimal_route[currentStep - 1];
+      let currentMarker = markers.find(m => m.getLatLng().lat === currentAddr.lat && m.getLatLng().lng === currentAddr.lon);
+      currentMarker.setStyle({fillColor: '#FFA500'});
+    }
+    document.getElementById('currentAddress').textContent = currentStep > 0 ? simulationData.optimal_route[currentStep - 1].address : 'N/A';
+    document.getElementById('remainingAddresses').textContent = simulationData.optimal_route.length - currentStep;
+    document.getElementById('stepCounter').textContent = currentStep;
+    updateDistanceCalculations();
+    document.getElementById('prevStep').disabled = currentStep === 0;
+    document.getElementById('nextStep').disabled = currentStep === simulationData.optimal_route.length;
+  }
+
+  function updateDistanceCalculations() {
+    const distanceCalc = document.getElementById('distanceCalculations');
+    if (currentStep === 0) {
+      distanceCalc.innerHTML = '<p>Click "Next Step" to start the simulation.</p>';
+      document.getElementById('totalDistance').textContent = '0';
+    } else {
+      const step = simulationData.steps[currentStep - 1];
+      let html = `<h6>Current address: ${step.current}</h6><ul>`;
+      step.options.forEach(option => {
+        html += `<li>${option.address}: ${option.distance.toFixed(2)} km ${option.address === step.chosen ? '(chosen)' : ''}</li>`;
+      });
+      html += '</ul>';
+      html += `<p>Chosen address: ${step.chosen}</p>`;
+      html += `<p>Distance: ${step.distance.toFixed(2)} km</p>`;
+      distanceCalc.innerHTML = html;
+      document.getElementById('totalDistance').textContent = step.total_distance.toFixed(2);
+    }
+  }
+
+  document.getElementById('prevStep').addEventListener('click', () => {
+    if (currentStep > 0) {
+      currentStep--;
+      updateVisualization();
+    }
+  });
+
+  document.getElementById('nextStep').addEventListener('click', () => {
+    if (currentStep < simulationData.optimal_route.length) {
+      currentStep++;
+      updateVisualization();
+    }
+  });
+
+  initMap();
+</script>
+{% endblock %}

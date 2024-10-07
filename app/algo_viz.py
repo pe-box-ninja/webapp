@@ -2,6 +2,8 @@ from typing import List, Dict, Tuple
 import random
 import math
 
+from app.lib.courier_service import a_star_route_optimization
+
 
 class Address:
     def __init__(self, address: str, lat: float, lon: float):
@@ -76,9 +78,9 @@ def nearest_neighbor_tsp(addresses: List[Address]) -> Tuple[List[Address], List[
     return path, steps
 
 
-def simulate_delivery() -> Dict:
+def simulate_delivery_old() -> Dict:
     selected_addresses = random.sample(VESZPREM_ADDRESSES, 7)
-    optimal_route, steps = nearest_neighbor_tsp(selected_addresses)
+    optimal_route, steps = nearest_neighbor_tsp(selected_addresses, 0)
 
     return {
         "addresses": [
@@ -97,5 +99,27 @@ def simulate_delivery() -> Dict:
             }
             for addr in optimal_route
         ],
+        "steps": steps,
+    }
+
+
+def simulate_delivery() -> Dict:
+    selected_addresses = random.sample(VESZPREM_ADDRESSES, len(VESZPREM_ADDRESSES))
+
+    # Convert
+    addresses_for_a_star = [
+        {
+            "address": addr.address,
+            "lat": addr.lat,
+            "lon": addr.lon,
+        }
+        for addr in selected_addresses
+    ]
+    optimal_route, steps = a_star_route_optimization(
+        addresses_for_a_star, start_index=0
+    )
+    return {
+        "addresses": addresses_for_a_star,
+        "optimal_route": optimal_route,
         "steps": steps,
     }
