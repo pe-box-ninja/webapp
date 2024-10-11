@@ -1,8 +1,7 @@
-version: '3.8'
 
 services:
   mailhog:
     image: mailhog/mailhog
     ports:
-      - "12825:8025"
-      - "12025:1025"
+      - "8025:8025"
+      - "1025:1025"
