@@ -30,6 +30,8 @@ def create_app(config_class=Config):
         auth,
         parcel_locker,
         admin,
+        service,
+        cdn,
     )
 
     app.register_blueprint(main.bp, url_prefix="/")
@@ -40,6 +42,8 @@ def create_app(config_class=Config):
     app.register_blueprint(courier.bp, url_prefix="/courier")
     app.register_blueprint(warehouse.bp, url_prefix="/warehouse")
     app.register_blueprint(user.bp, url_prefix="/user")
+    app.register_blueprint(service.bp, url_prefix="/service")
+    app.register_blueprint(cdn.bp, url_prefix="/cdn")
 
     return app
 

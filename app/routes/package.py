@@ -10,6 +10,28 @@ from sqlalchemy import or_
 bp = Blueprint("package", __name__)
 
 
+@bp.route("/create", methods=["GET", "POST"])
+@login_required
+@warehouse_required
+def create():
+    form = CreatePackageForm()
+    if form.validate_on_submit():
+        package = Package(
+            tracking_number=form.tracking_number.data,
+            status=form.status.data,
+            weight=form.weight.data,
+            dimensions=form.dimensions.data,
+            sender_address=form.sender_address.data,
+            recipient_address=form.recipient_address.data,
+            delivery_deadline=form.delivery_deadline.data,
+        )
+        db.session.add(package)
+        db.session.commit()
+        flash("Csomagküldés kezdeményezve!", "success")
+        return redirect(url_for("package.list"))
+    return render_template("package/create.html", title="Csomagküldés", form=form)
+
+
 @bp.route("/list")
 @login_required
 @warehouse_required
@@ -82,27 +104,4 @@ def edit(id):
         return redirect(url_for("package.list"))
     return render_template(
         "package/edit.html", title="Csomag szerkesztése", form=form, package=package
-    )
-
-
-@bp.route("/create", methods=["GET", "POST"])
-@login_required
-@warehouse_required
-def create():
-    form = CreatePackageForm()
-    if form.validate_on_submit():
-        package = Package(
-            tracking_number=form.tracking_number.data,
-            status=form.status.data,
-            weight=form.weight.data,
-            dimensions=form.dimensions.data,
-            sender_address=form.sender_address.data,
-            recipient_address=form.recipient_address.data,
-        )
-        db.session.add(package)
-        db.session.commit()
-        flash("Az új csomag sikeresen létrehozva.", "success")
-        return redirect(url_for("package.list"))
-    return render_template(
-        "package/create.html", title="Új csomag létrehozása", form=form
     )

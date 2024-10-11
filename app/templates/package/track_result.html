@@ -1,32 +1,72 @@
-{% extends "base.html" %}
-{% from "design-system.html" import icon, badge %}
+{% extends "base.html" %} {% from "design-system.html" import icon, badge %} {%
+block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Csomag Információk</h1>
 
-{% block content %}
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header">Csomag Információk</div>
-        <div class="card-body">
-            <div class="mb-3">
-                <strong>{{ icon('box') }} Csomagszám:</strong>
-                {{ package.tracking_number }}
-            </div>
-            <div class="mb-3">
-                <strong>{{ icon('info-circle') }} Státusz:</strong>
-                {{ badge(package.status, 'primary') }}
-            </div>
-            <div class="mb-3">
-                <strong>{{ icon('map-marker-alt') }} Feladó címe:</strong>
-                {{ package.sender_address }}
-            </div>
-            <div class="mb-3">
-                <strong>{{ icon('map-marker-alt') }} Címzett címe:</strong>
-                {{ package.recipient_address }}
-            </div>
-            <div class="mb-3">
-                <strong>{{ icon('calendar-alt') }} Várható kézbesítés:</strong>
-                {{ package.delivery_deadline.strftime("%Y-%m-%d") }}
-            </div>
-        </div>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">{{ icon('box') }} Csomag Adatai</h5>
     </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <h6>{{ icon('hashtag') }} Csomagszám</h6>
+          <p class="lead">{{ package.tracking_number }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <h6>{{ icon('info-circle') }} Státusz</h6>
+          <p>{{ badge(package.status, 'primary') }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <h6>{{ icon('weight') }} Súly</h6>
+          <p>{{ package.weight }} kg</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <h6>{{ icon('ruler-combined') }} Méretek</h6>
+          <p>{{ package.dimensions }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <h6>{{ icon('map-marker-alt') }} Feladó címe</h6>
+          <p>{{ package.sender_address }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <h6>{{ icon('map-marker-alt') }} Címzett címe</h6>
+          <p>{{ package.recipient_address }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <h6>{{ icon('calendar-alt') }} Létrehozva</h6>
+          <p>{{ package.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+          <h6>{{ icon('calendar-check') }} Várható kézbesítés</h6>
+          <p>{{ package.delivery_deadline.strftime('%Y-%m-%d') }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">{{ icon('history') }} Csomag Története</h5>
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <div class="d-flex w-100 justify-content-between">
+            <h6 class="mb-1">Csomag létrehozva</h6>
+            <small>{{ package.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+          </div>
+          <p class="mb-1">A csomag rögzítésre került a rendszerben.</p>
+        </li>
+        <!-- Itt további történeti eseményeket lehet hozzáadni, ha vannak -->
+      </ul>
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="{{ url_for('package.track') }}" class="btn btn-primary"
+      >{{ icon('search') }} Másik csomag keresése</a
+    >
+  </div>
 </div>
 {% endblock %}

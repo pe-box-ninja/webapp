@@ -6,6 +6,7 @@ from wtforms import (
     SubmitField,
     FloatField,
     SelectField,
+    DateField,
 )
 from wtforms.validators import (
     DataRequired,
@@ -14,7 +15,7 @@ from wtforms.validators import (
     ValidationError,
     NumberRange,
 )
-from app.models import User
+from app.models import User, PackageStatus
 
 
 class LoginForm(FlaskForm):
@@ -79,3 +80,18 @@ class EditPackageForm(FlaskForm):
     sender_address = StringField("Feladó címe", validators=[DataRequired()])
     recipient_address = StringField("Címzett címe", validators=[DataRequired()])
     submit = SubmitField("Csomag módosítása")
+
+
+class CreatePackageForm(FlaskForm):
+    tracking_number = StringField("Nyomkövetési szám", validators=[DataRequired()])
+    status = SelectField(
+        "Státusz",
+        choices=[(status, status) for status in PackageStatus.list()],
+        validators=[DataRequired()],
+    )
+    weight = FloatField("Súly (kg)", validators=[DataRequired(), NumberRange(min=0.1)])
+    dimensions = StringField("Méretek (cm)", validators=[DataRequired()])
+    sender_address = StringField("Feladó címe", validators=[DataRequired()])
+    recipient_address = StringField("Címzett címe", validators=[DataRequired()])
+    delivery_deadline = DateField("Kézbesítési határidő", validators=[DataRequired()])
+    submit = SubmitField("Csomag létrehozása")
