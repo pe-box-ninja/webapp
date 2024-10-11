@@ -1,99 +1,74 @@
 {% extends "base.html" %}
-
 {% block content %}
 <div class="container mt-4">
+    <h1 class="mb-4">Csomagok</h1>
+
     <div class="row mb-4">
-        <div class="col-md-3 mb-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body py-2">
-                    <h6 class="card-title mb-0">
-                        <i class="fas fa-boxes fa-sm mr-2"></i>
-                        Összes csomag
-                    </h6>
-                    <p class="card-text h3 mt-2 mb-0">{{ packages|length }}</p>
+        <div class="col-md-4">
+            <form action="{{ url_for('package.list') }}" method="get" class="form-inline">
+                <div class="form-group mr-2">
+                    <select name="status" class="form-control p-2">
+                        <option value="all" {% if current_filter == 'all' %}selected{% endif %}>Összes státusz</option>
+                        {% for status in PackageStatus.list() %}
+                            <option value="{{ status }}" {% if current_filter == status %}selected{% endif %}>
+                                {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[status] }}
+                            </option>
+                        {% endfor %}
+                    </select>
                 </div>
-            </div>
+                <button type="submit" class="btn btn-primary">Szűrés</button>
+            </form>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card bg-success text-white">
-                <div class="card-body py-2">
-                    <h6 class="card-title mb-0">
-                        <i class="fas fa-truck fa-sm mr-2"></i>
-                        Szállítás alatt
-                    </h6>
-                    <p class="card-text h3 mt-2 mb-0">{{ packages|selectattr("status", "equalto", "szállítás alatt")|list|length }}</p>
+        <div class="col-md-4">
+            <form action="{{ url_for('package.list') }}" method="get" class="form-inline">
+                <div class="form-group mr-2">
+                    <input type="text" name="search" class="form-control" placeholder="Keresés..." value="{{ search_query }}">
                 </div>
-            </div>
+                <button type="submit" class="btn btn-primary">Keresés</button>
+            </form>
         </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-white" style="background-color: var(--primary-color);">
-                <div class="card-body py-2">
-                    <h6 class="card-title mb-0">
-                        <i class="fas fa-weight fa-sm mr-2"></i>
-                        Összsúly
-                    </h6>
-                    <p class="card-text h3 mt-2 mb-0">{{ "%.2f"|format(packages|sum(attribute="weight")) }} kg</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card text-dark" style="background-color: var(--accent-color);">
-                <div class="card-body py-2">
-                    <h6 class="card-title mb-0">
-                        <i class="fas fa-clock fa-sm mr-2"></i>
-                        Függőben
-                    </h6>
-                    <p class="card-text h3 mt-2 mb-0">{{ packages|selectattr("status", "equalto", "függőben")|list|length }}</p>
-                </div>
+        <div class="col-md-4">
+            <div class="form-inline">
+                <a href="{{ url_for('package.create') }}" class="btn btn-success">Új csomag hozzáadása</a>
             </div>
         </div>
     </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            Státusz magyarázat
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled">
+                <li><span class="badge badge-warning">Függőben</span> - A csomag feldolgozásra vár</li>
+                <li><span class="badge badge-primary">Szállítás alatt</span> - A csomag úton van a címzetthez</li>
+                <li><span class="badge badge-success">Kézbesítve</span> - A csomagot sikeresen kézbesítették</li>
+                <li><span class="badge badge-danger">Visszaküldve</span> - A csomagot nem sikerült kézbesíteni, visszaküldésre került</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Existing table code -->
     <div class="card shadow-sm">
-        <div class="card-header ">
-            <i class="fas fa-list fa-sm mr-2"></i>
+        <div class="card-header">
             Csomagok listája
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
-                    <thead class="thead-light">
+                    <thead>
                         <tr>
-                            <th class="px-3">
-                                <small>
-                                    <i class="fas fa-hashtag fa-sm mr-1"></i>
-                                    Azonosító
-                                </small>
-                            </th>
-                            <th>
-                                <small>
-                                    <i class="fas fa-barcode fa-sm mr-1"></i>
-                                    Nyomkövetési szám
-                                </small>
-                            </th>
-                            <th>
-                                <small>
-                                    <i class="fas fa-info-circle fa-sm mr-1"></i>
-                                    Státusz
-                                </small>
-                            </th>
-                            <th>
-                                <small>
-                                    <i class="fas fa-weight fa-sm mr-1"></i>
-                                    Súly
-                                </small>
-                            </th>
-                            <th class="px-3">
-                                <small>
-                                    <i class="fas fa-cogs fa-sm mr-1"></i>
-                                    Műveletek
-                                </small>
-                            </th>
+                            <th scope="col" class="small">Azonosító</th>
+                            <th scope="col" class="small">Nyomkövetési szám</th>
+                            <th scope="col" class="small">Státusz</th>
+                            <th scope="col" class="small">Súly</th>
+                            <th scope="col" class="small">Műveletek</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for package in packages %}
                         <tr>
-                            <td class="px-3">{{ package.id }}</td>
+                            <td>{{ package.id }}</td>
                             <td>{{ package.tracking_number }}</td>
                             <td>
                                 <span class="badge px-2 py-2 badge-{{ {'függőben': 'warning', 'szállítás alatt': 'primary', 'kézbesítve': 'success', 'visszaküldve': 'danger'}[package.status] }}">
@@ -101,15 +76,9 @@
                                 </span>
                             </td>
                             <td>{{ package.weight }} kg</td>
-                            <td class="px-3">
-                                <a href="{{ url_for('package.view', id=package.id) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-eye fa-sm mr-1"></i>
-                                    Megtekintés
-                                </a>
-                                <a href="{{ url_for('package.edit', id=package.id) }}" class="btn btn-sm btn-outline-secondary">
-                                    <i class="fas fa-edit fa-sm mr-1"></i>
-                                    Szerkesztés
-                                </a>
+                            <td>
+                                <a href="{{ url_for('package.view', id=package.id) }}" class="btn btn-sm btn-outline-primary">Megtekintés</a>
+                                <a href="{{ url_for('package.edit', id=package.id) }}" class="btn btn-sm btn-outline-secondary">Szerkesztés</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -118,15 +87,5 @@
             </div>
         </div>
     </div>
-    <div class="mt-4">
-        <a href="{{ url_for('package.create') }}" class="btn btn-success">
-            <i class="fas fa-plus fa-sm mr-2"></i>
-            Új csomag hozzáadása
-        </a>
-    </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script src="https://kit.fontawesome.com/a076d05399.js"></script>
 {% endblock %}

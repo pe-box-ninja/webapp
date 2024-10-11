@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required
-from app.models import Package
+from app.models import Package, PackageStatus
 from app.decorators import warehouse_required
 from app import db
 from app.forms import EditPackageForm, CreatePackageForm
 from flask import redirect, url_for
+from sqlalchemy import or_
 
 bp = Blueprint("package", __name__)
 
@@ -13,8 +14,32 @@ bp = Blueprint("package", __name__)
 @login_required
 @warehouse_required
 def list():
-    packages = Package.query.all()
-    return render_template("package/list.html", title="Csomagok", packages=packages)
+    status_filter = request.args.get("status", "all")
+    search_query = request.args.get("search", "")
+
+    query = Package.query
+
+    if status_filter != "all":
+        query = query.filter(Package.status == status_filter)
+
+    if search_query:
+        query = query.filter(
+            or_(
+                Package.tracking_number.ilike(f"%{search_query}%"),
+                Package.sender_address.ilike(f"%{search_query}%"),
+                Package.recipient_address.ilike(f"%{search_query}%"),
+            )
+        )
+
+    packages = query.all()
+    return render_template(
+        "package/list.html",
+        title="Csomagok",
+        packages=packages,
+        current_filter=status_filter,
+        search_query=search_query,
+        PackageStatus=PackageStatus,
+    )
 
 
 @bp.route("/view/<int:id>")
