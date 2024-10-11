@@ -1,6 +1,64 @@
-<html>
-    <body>
-        <h1>Welcome to BoxNinja, {{ user.username }}!</h1>
-        <p>We're excited to have you on board. Start exploring our features now!</p>
-    </body>
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Üdvözöljük a BoxNinja-nál!</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .logo img {
+        max-width: 200px;
+      }
+      .container {
+        background-color: #f4f4f4;
+        border-radius: 5px;
+        padding: 20px;
+      }
+      .button {
+        display: inline-block;
+        background-color: #8d6e63;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo">
+      <img
+        src="{{ base_url }}{{ url_for('cdn.serve_logo') }}"
+        alt="BoxNinja Logo"
+      />
+    </div>
+    <div class="container">
+      <h1>Üdvözöljük a BoxNinja-nál, {{ user.username }}!</h1>
+      <p>
+        Örülünk, hogy csatlakozott hozzánk! A BoxNinja-val egyszerűen és
+        hatékonyan kezelheti csomagjait.
+      </p>
+      <p>Néhány funkció, amit kipróbálhat:</p>
+      <ul>
+        <li>Valós idejű csomagkövetés</li>
+        <li>Egyszerű csomagfeladás</li>
+        <li>Intelligens kézbesítési útvonaltervezés</li>
+      </ul>
+      <p>Kezdje el használni a BoxNinja-t még ma!</p>
+      <a href="{{ base_url }}/dashboard" class="button"
+        >Irányítópult megnyitása</a
+      >
+    </div>
+  </body>
 </html>

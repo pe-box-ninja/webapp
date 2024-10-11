@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Csomagja megérkezett a BoxNinja-hoz</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .logo img {
+        max-width: 200px;
+      }
+      .container {
+        background-color: #f4f4f4;
+        border-radius: 5px;
+        padding: 20px;
+      }
+      .tracking-number {
+        background-color: #e8f5e9;
+        border: 1px solid #4caf50;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 20px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .button {
+        display: inline-block;
+        background-color: #8d6e63;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo">
+      <img
+        src="{{ base_url }}{{ url_for('cdn.serve_logo') }}"
+        alt="BoxNinja Logo"
+      />
+    </div>
+    <div class="container">
+      <h1>Csomagja megérkezett a BoxNinja-hoz</h1>
+      <p>Kedves {{ user.username }},</p>
+      <p>
+        Örömmel értesítjük, hogy csomagja megérkezett a BoxNinja raktárába.
+        Hamarosan felvesszük Önnel a kapcsolatot a kézbesítés részleteivel
+        kapcsolatban.
+      </p>
+      <p>
+        A csomag nyomon követéséhez használja az alábbi nyomkövetési számot:
+      </p>
+      <div class="tracking-number">{{ tracking_number }}</div>
+      <p>
+        A csomagja aktuális státuszát és további részleteket a BoxNinja
+        weboldalán tekintheti meg.
+      </p>
+      <a href="{{ base_url }}{{ url_for('package.track') }}" class="button"
+        >Csomag nyomon követése</a
+      >
+      <p>
+        Ha bármilyen kérdése van a csomagjával kapcsolatban, kérjük, vegye fel
+        velünk a kapcsolatot.
+      </p>
+      <p>Köszönjük, hogy a BoxNinja szolgáltatását választotta!</p>
+    </div>
+  </body>
+</html>
