@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, redirect, url_for
+from flask import Blueprint, redirect, url_for, request
 from app.models import User
 from app.email import (
     send_welcome_email,
@@ -22,10 +22,11 @@ def service_delivery():
 @bp.route("/login", methods=["GET"])
 def service_login():
     user = User.query.filter_by(username="admin_martin").first()
-    random_ip = "127.0.0.1"
-    browser = "Chrome"
+    login_date = datetime.utcnow()
+    login_ip = request.remote_addr
+    login_device = request.user_agent.string
     send_login_notification(
-        user, login_date=datetime.now(), login_ip=random_ip, login_device=browser
+        user, login_date=login_date, login_ip=login_ip, login_device=login_device
     )
     return redirect(url_for("main.index"))
 

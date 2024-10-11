@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user
 from werkzeug.urls import url_parse
 from app import db
 from app.models import User
@@ -20,7 +22,12 @@ def login():
             flash("Helytelen felhasználónév vagy jelszó!")
             return redirect(url_for("auth.login"))
         login_user(user, remember=form.remember_me.data)
-        send_login_notification(user)
+
+        login_date = datetime.utcnow()
+        login_ip = request.remote_addr
+        login_device = request.user_agent.string
+        send_login_notification(user, login_date, login_ip, login_device)
+
         next_page = request.args.get("next")
         if not next_page or url_parse(next_page).netloc != "":
             if user.is_guest():
