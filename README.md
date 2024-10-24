@@ -26,10 +26,9 @@ Follow these steps to set up the project on your local machine:
 
 2. **Clone the repository**
    ```
-   git clone [repository-url]
-   cd [repository-name]
+   git clone https://github.com/pe-box-ninja/webapp
+   cd https://github.com/pe-box-ninja/webapp
    ```
-   Replace `[repository-url]` with the actual URL of the Git repository, and `[repository-name]` with the name of the created folder.
 
 3. **Create a virtual environment**
    - On Windows:
