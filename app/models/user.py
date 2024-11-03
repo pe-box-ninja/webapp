@@ -34,6 +34,10 @@ class User(UserMixin, db.Model):
 
     def is_guest(self):
         return self.role == "guest"
+    
+    def user_roles(self):
+        list=["admin", "warehouse", "courier", "guest"]
+        return list
 
 
 @login.user_loader

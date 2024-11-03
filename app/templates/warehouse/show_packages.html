@@ -1,0 +1,43 @@
+{% extends "base.html" %} {% block content %}
+<h1>Raktárban lévő csomagok</h1>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        Csomagok listája
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col" class="small">Azonosító</th>
+                        <th scope="col" class="small">Nyomkövetési szám</th>
+                        <th scope="col" class="small">Státusz</th>
+                        <th scope="col" class="small">Súly</th>
+                        <th scope="col" class="small">Műveletek</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for package in warehouse_packages %}
+                    <tr>
+                        <td>{{ package.id }}</td>
+                        <td>{{ package.tracking_number }}</td>
+                        <td>
+                            <span class="badge px-2 py-2 badge-{{ {'függőben': 'warning', 'szállítás alatt': 'primary', 'kézbesítve': 'success', 'visszaküldve': 'danger'}[package.status] }}">
+                                {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[package.status] }}
+                            </span>
+                        </td>
+                        <td>{{ package.weight }} kg</td>
+                        <td>
+                            <a href="{{ url_for('package.view', id=package.id) }}" class="btn btn-sm btn-outline-primary">Megtekintés</a>
+                            <a href="{{ url_for('package.edit', id=package.id) }}" class="btn btn-sm btn-outline-secondary">Szerkesztés</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

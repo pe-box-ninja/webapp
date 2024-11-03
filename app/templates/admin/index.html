@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 
 {% block content %}
     <h1>Admin Panel</h1>
@@ -19,7 +19,25 @@
                 <td>{{ user.id }}</td>
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
+                <td>
+                    <!-- Get permission options for current user and show it in a list -->
+                     <!-- ---------------------------------------------------------------  -->
+                    <select name="permission_options{{loop.index}}" id="permission_options{{loop.index}}" onchange="change_permission({{user.id}} , {{loop.index}})">
+                        <!-- flash("Userid: "+ {{user.id}}+, "Loop index: "+ {{loop.index}}) -->
+                        {% for user_role in user.user_roles() %}
+                            {% if user_role!=user.role %}
+                                <option value="{{ user_role }}">{{user_role}}</option>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% for user_role in user.user_roles() %}
+                            {% if user_role==user.role %}
+                                <option value="{{ user_role }}" selected>{{user_role}}</option>
+                            {% endif %}
+                        {% endfor %}
+                      </select>
+                      <!-- ---------------------------------------------------------------  -->
+                </td>
                 <td>{{ user.created_at }}</td>
                 <td>{{ user.updated_at }}</td>
             </tr>

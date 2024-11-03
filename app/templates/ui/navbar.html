@@ -55,6 +55,9 @@
                         Csomagautomaták
                     </a>
                 </li>
+
+                
+                
                 {% elif current_user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('package.send') }}">
@@ -62,9 +65,7 @@
                         Csomagküldés
                     </a>
                 </li>
-                {% endif %}
-
-                {% if current_user.is_authenticated %}
+                
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('package.track') }}">
                         <i class="fas fa-truck-fast mr-1"></i>
