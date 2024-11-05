@@ -1,7 +1,8 @@
 
 services:
   mailhog:
+    container_name: "mailhog_boxninja"
     image: mailhog/mailhog
     ports:
-      - "8025:8025"
-      - "1025:1025"
+      - "8125:8025"
+      - "1125:1025"

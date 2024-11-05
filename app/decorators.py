@@ -17,7 +17,9 @@ def warehouse_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated or (
-            not current_user.is_warehouse() and not current_user.is_admin()
+            not current_user.is_courier()
+            and not current_user.is_warehouse()
+            and not current_user.is_admin()
         ):
             abort(403)
         return f(*args, **kwargs)
