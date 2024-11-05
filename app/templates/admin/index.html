@@ -22,7 +22,7 @@
                 <td>
                     <!-- Get permission options for current user and show it in a list -->
                      <!-- ---------------------------------------------------------------  -->
-                    <select name="permission_options{{loop.index}}" id="permission_options{{loop.index}}" onchange="change_permission({{user.id}} , {{loop.index}})">
+                    <select name="permission_options{{loop.index}}" id="permission_options{{loop.index}}" class="form-control p-2" onchange="change_permission({{user.id}} , {{loop.index}})">
                         <!-- flash("Userid: "+ {{user.id}}+, "Loop index: "+ {{loop.index}}) -->
                         {% for user_role in user.user_roles() %}
                             {% if user_role!=user.role %}
