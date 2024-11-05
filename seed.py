@@ -118,15 +118,17 @@ def seed_assignments(num_assignments=150):
     lockers = ParcelLocker.query.all()
     statuses = ["assigned", "in_progress", "completed"]
 
+    used_warehouse = random.choice(warehouses).id
+    used_parcel_locker = random.choice(lockers).id
+    used_storage = used_warehouse if random.random() > 0.5 else used_parcel_locker
+
     for _ in range(num_assignments):
         assignment = Assignment(
             package_id=random.choice(packages).id,
             courier_id=random.choice(couriers).id,
-            warehouse_id=(
-                random.choice(warehouses).id if random.random() > 0.5 else None
-            ),
+            warehouse_id=(used_warehouse if used_storage == used_warehouse else None),
             parcel_locker_id=(
-                random.choice(lockers).id if random.random() > 0.5 else None
+                used_parcel_locker if used_storage == used_parcel_locker else None
             ),
             status=random.choice(statuses),
             assigned_at=fake.date_time_this_year(),
