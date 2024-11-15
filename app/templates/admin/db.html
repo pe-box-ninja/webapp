@@ -1,6 +1,6 @@
 {% extends "base.html" %} {% import 'design-system.html' as design with context
 %} {% block content %}
-<div class="container mt-4">
+<div class="container mt-4 p-0">
   {{ design.heading("Database Overview", 1) }}
 
   <div class="card mb-4">
@@ -54,6 +54,7 @@
               <th>Sender Address</th>
               <th>Recipient Address</th>
               <th>Delivery Deadline</th>
+              <th>Location</th>
             </tr>
           </thead>
           <tbody>
@@ -67,6 +68,15 @@
               <td>{{ package.sender_address }}</td>
               <td>{{ package.recipient_address }}</td>
               <td>{{ package.delivery_deadline }}</td>
+              <td>
+                {% set assignment =
+                package.assignments|selectattr('completed_at', 'none')|first %}
+                {% if assignment %} {% if assignment.warehouse_id %} Warehouse:
+                {{ assignment.warehouse.name }} {% elif
+                assignment.parcel_locker_id %} Locker: {{
+                assignment.parcel_locker.location }} {% else %} In Transit {%
+                endif %} {% else %} Not Assigned {% endif %}
+              </td>
             </tr>
             {% endfor %}
           </tbody>
