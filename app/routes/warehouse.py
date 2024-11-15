@@ -32,16 +32,8 @@ def show_packages(id):
         if assignment.warehouse_id==warehouse.id:
             package_id=assignment.package_id
             package=Package.query.get_or_404(package_id)
-            warehouse_packages.append(package)
+            if package.status != "kézbesítve":
+                warehouse_packages.append(package)
     return render_template(
         "warehouse/show_packages.html", title="Raktárban lévő csomagok megtekintése", warehouse=warehouse, warehouse_packages=warehouse_packages
-    )
-
-@bp.route("warehouse/delete")
-@login_required
-@warehouse_required
-def delete(id):
-    warehouse = Warehouse.query.get_or_404(id)
-    return render_template(
-        "warehouse/delete.html", title="Warehouse törlése", warehouse=warehouse
     )

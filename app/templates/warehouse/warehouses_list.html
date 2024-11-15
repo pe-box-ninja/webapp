@@ -24,7 +24,6 @@
             <td>{{ warehouse.updated_at }}</td> -->
             <td>
                 <a href="{{ url_for('warehouse.show_packages', id=warehouse.id) }}" class="btn btn-sm btn-primary">Csomagok megtekintése</a>
-                <a href="{{ url_for('warehouse.delete', id=warehouse.id) }}" class="btn btn-sm btn-danger">Raktár törlése</a>
             </td>
         </tr>
         {% endfor %}
