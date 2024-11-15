@@ -1,0 +1,224 @@
+{% extends "base.html" %} {% import 'design-system.html' as design with context
+%} {% block content %}
+<div class="container mt-4">
+  {{ design.heading("Database Overview", 1) }}
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0">Users</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td>{{ user.id }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.role }}</td>
+              <td>{{ user.created_at }}</td>
+              <td>{{ user.updated_at }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white">
+      <h3 class="mb-0">Packages</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Tracking Number</th>
+              <th>Status</th>
+              <th>Weight</th>
+              <th>Dimensions</th>
+              <th>Sender Address</th>
+              <th>Recipient Address</th>
+              <th>Delivery Deadline</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for package in packages %}
+            <tr>
+              <td>{{ package.id }}</td>
+              <td>{{ package.tracking_number }}</td>
+              <td>{{ package.status }}</td>
+              <td>{{ package.weight }}</td>
+              <td>{{ package.dimensions }}</td>
+              <td>{{ package.sender_address }}</td>
+              <td>{{ package.recipient_address }}</td>
+              <td>{{ package.delivery_deadline }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card mb-4">
+    <div class="card-header bg-info text-white">
+      <h3 class="mb-0">Couriers</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Current Location</th>
+              <th>Working Hours</th>
+              <th>Capacity</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for courier in couriers %}
+            <tr>
+              <td>{{ courier.id }}</td>
+              <td>{{ courier.name }}</td>
+              <td>{{ courier.email }}</td>
+              <td>{{ courier.phone }}</td>
+              <td>{{ courier.status }}</td>
+              <td>{{ courier.current_location }}</td>
+              <td>{{ courier.working_hours }}</td>
+              <td>{{ courier.capacity }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-warning text-dark">
+      <h3 class="mb-0">Warehouses</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Capacity</th>
+              <th>Current Load</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for warehouse in warehouses %}
+            <tr>
+              <td>{{ warehouse.id }}</td>
+              <td>{{ warehouse.name }}</td>
+              <td>{{ warehouse.address }}</td>
+              <td>{{ warehouse.capacity }}</td>
+              <td>{{ warehouse.current_load }}</td>
+              <td>{{ warehouse.created_at }}</td>
+              <td>{{ warehouse.updated_at }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card mb-4">
+    <div class="card-header bg-danger text-white">
+      <h3 class="mb-0">Assignments</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Package ID</th>
+              <th>Courier ID</th>
+              <th>Warehouse ID</th>
+              <th>Parcel Locker ID</th>
+              <th>Status</th>
+              <th>Assigned At</th>
+              <th>Completed At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for assignment in assignments %}
+            <tr>
+              <td>{{ assignment.id }}</td>
+              <td>{{ assignment.package_id }}</td>
+              <td>{{ assignment.courier_id }}</td>
+              <td>{{ assignment.warehouse_id }}</td>
+              <td>{{ assignment.parcel_locker_id }}</td>
+              <td>{{ assignment.status }}</td>
+              <td>{{ assignment.assigned_at }}</td>
+              <td>{{ assignment.completed_at }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-secondary text-white">
+      <h3 class="mb-0">Parcel Lockers</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Location</th>
+              <th>Address</th>
+              <th>Total Compartments</th>
+              <th>Available Compartments</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for locker in parcel_lockers %}
+            <tr>
+              <td>{{ locker.id }}</td>
+              <td>{{ locker.location }}</td>
+              <td>{{ locker.address }}</td>
+              <td>{{ locker.total_compartments }}</td>
+              <td>{{ locker.available_compartments }}</td>
+              <td>{{ locker.created_at }}</td>
+              <td>{{ locker.updated_at }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
