@@ -53,6 +53,10 @@ def list():
             )
         )
 
+    def filter_for_warehouse(package: Package):
+        # TODO
+        pass
+
     packages = query.all()
     return render_template(
         "package/list.html",
