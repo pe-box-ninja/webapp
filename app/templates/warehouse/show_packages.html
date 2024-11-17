@@ -2,9 +2,48 @@
 <h1>Raktárban lévő csomagok</h1>
 
 <div class="card shadow-sm">
-    <div class="card-header">
-        Csomagok listája
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <form action="{{ url_for('warehouse.show_packages', id=warehouse.id) }}" method="get" class="form-inline">
+                <div class="form-group mr-2">
+                    <select name="status" class="form-control p-2">
+                        <option value="all" {% if current_filter == 'all' %}selected{% endif %}>Összes státusz</option>
+                        {% for status in PackageStatus.list() %}
+                        {% if status != "kézbesítve" %}
+                            <option value="{{ status }}" {% if current_filter == status %}selected{% endif %}>
+                                {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt','visszaküldve': 'Visszaküldve'}[status] }}
+                            </option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Szűrés</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <form action="{{ url_for('warehouse.show_packages', id=warehouse.id) }}" method="get" class="form-inline">
+                <div class="form-group mr-2">
+                    <input type="text" name="search" class="form-control" placeholder="Keresés..." value="{{ search_query }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Keresés</button>
+            </form>
+        </div>
     </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            Státusz magyarázat
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled">
+                <li><span class="badge badge-warning">Függőben</span> - A csomag feldolgozásra vár</li>
+                <li><span class="badge badge-primary">Szállítás alatt</span> - A csomag úton van a címzetthez</li>
+                <li><span class="badge badge-danger">Visszaküldve</span> - A csomagot nem sikerült kézbesíteni, visszaküldésre került</li>
+            </ul>
+        </div>
+    </div>
+
+
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover mb-0">
@@ -18,7 +57,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for package in warehouse_packages %}
+
+                    {% if warehouse_package_with_search_and_status_length == 0 %}
+                        <h1>Nincs csomag a raktárban!</h1>
+                    {% endif %}
+
+                    {% for package in warehouse_package_with_search_and_status %}
                     <tr>
                         <td>{{ package.id }}</td>
                         <td>{{ package.tracking_number }}</td>
