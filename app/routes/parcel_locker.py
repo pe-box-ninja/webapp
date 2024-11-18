@@ -96,7 +96,7 @@ def show_packages_inside_parcer_locker(id):
 
     return render_template(
         "parcel_locker/show_packages_inside_parcel_locker.html", 
-        title="CSomagautomatában lévő csomagok megtekintése", 
+        title="Csomagautomatában lévő csomagok megtekintése", 
         parcel_locker=parcel_locker, 
         parcel_locker_package_with_search_and_status=parcel_locker_package_with_search_and_status,
         parcel_locker_package_with_search_and_status_length=len(parcel_locker_package_with_search_and_status),
