@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block content %}
+<h1>Csomagautomaták</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Capacity</th>
+            <th>Current_load</th>
+            <!-- <th>Created At</th>
+            <th>Updated At</th> -->
+            <th>Műveletek</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for parcel_locker in parcel_lockers %}
+        <tr>
+            <td>{{ parcel_locker.location }}</td>
+            <td>{{ parcel_locker.address }}</td>
+            <td>{{ parcel_locker.total_compartments }}</td>
+            <td>{{ parcel_locker.available_compartments }}</td>
+            <!-- <td>{{ parcel_locker.created_at }}</td>
+            <td>{{ parcel_locker.updated_at }}</td> -->
+            <td>
+                <!-- <p>{{ parcel_locker.id }}</p>
+                <br> -->
+                <a href="{{ url_for('parcel_locker.show_packages_inside_parcer_locker', id=parcel_locker.id) }}" class="btn btn-sm btn-primary">Csomagok megtekintése</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

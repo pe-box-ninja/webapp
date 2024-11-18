@@ -18,10 +18,10 @@ def list():
         "warehouse/warehouses_list.html", title="Raktárak", warehouses=warehouses
     )
 
-@bp.route("warehouse/show_packages/<id>")
+@bp.route("warehouse/show_packages_inside_warehouse/<id>")
 @login_required
 @warehouse_required
-def show_packages(id):
+def show_packages_inside_warehouse(id):
     
     status_filter = request.args.get("status", "all")
     search_query = request.args.get("search", "")
@@ -65,7 +65,7 @@ def show_packages(id):
 
 
     return render_template(
-        "warehouse/show_packages.html", 
+        "warehouse/show_packages_inside_warehouse.html", 
         title="Raktárban lévő csomagok megtekintése", 
         warehouse=warehouse, 
         warehouse_package_with_search_and_status=warehouse_package_with_search_and_status,
