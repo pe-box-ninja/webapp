@@ -40,3 +40,17 @@ def edit(id):
 @warehouse_required
 def create():
     return render_template("courier/create.html", title="Futár létrehozása")
+
+
+@bp.route("/assign_packages")
+@login_required
+@warehouse_required
+def assign_packages():
+    return render_template("courier/assign_packages.html", title="Csomagok felvétele")
+
+
+@bp.route("/optimat_path")
+@login_required
+@warehouse_required
+def optimal_path():
+    return render_template("courier/optimal_path.html", title="Optimális útvonal meghatározása")
