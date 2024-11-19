@@ -1,41 +1,12 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask_login import login_required
 from app.models import ParcelLocker, Package, Assignment, PackageStatus
 from app.decorators import warehouse_required
+from app.forms import EditParcelLockerForm, CreateParcelLockerForm
+from app import db
 from sqlalchemy import or_
 
 bp = Blueprint("parcel_locker", __name__)
-
-
-@bp.route("/view/<int:id>")
-@login_required
-@warehouse_required
-def view(id):
-    parcel_locker = ParcelLocker.query.get_or_404(id)
-    return render_template(
-        "parcel_locker/view.html", title="Csomagautomata", parcel_locker=parcel_locker
-    )
-
-
-@bp.route("/edit/<int:id>")
-@login_required
-@warehouse_required
-def edit(id):
-    parcel_locker = ParcelLocker.query.get_or_404(id)
-    return render_template(
-        "parcel_locker/edit.html",
-        title="Csomagautomata módosítása",
-        parcel_locker=parcel_locker,
-    )
-
-
-@bp.route("/create")
-@login_required
-@warehouse_required
-def create():
-    return render_template(
-        "parcel_locker/create.html", title="Csomagautomata felvétele"
-    )
 
 
 @bp.route("/list")
@@ -48,10 +19,10 @@ def list():
     )
 
 
-@bp.route("parcel_locker/show_packages_inside_parcer_locker/<id>")
+@bp.route("parcel_locker/show_packages_inside_parcel_locker/<id>")
 @login_required
 @warehouse_required
-def show_packages_inside_parcer_locker(id):
+def show_packages_inside_parcel_locker(id):
     
     status_filter = request.args.get("status", "all")
     search_query = request.args.get("search", "")
@@ -104,3 +75,39 @@ def show_packages_inside_parcer_locker(id):
         search_query=search_query,
         PackageStatus=PackageStatus
     )
+
+
+@bp.route("/create", methods=["GET", "POST"])
+@login_required
+@warehouse_required
+def create():
+    form = CreateParcelLockerForm()
+    if form.validate_on_submit():
+        parcel_locker = ParcelLocker(
+            location=form.location.data,
+            address=form.address.data,
+            total_compartments=form.total_compartments.data,
+            available_compartments=form.available_compartments.data,
+        )
+        db.session.add(parcel_locker)
+        db.session.commit()
+        flash("Sikeres csomagautomatafelvétel!", "success")
+        return redirect(url_for("parcel_locker.list"))
+    return render_template("parcel_locker/create.html", title="Új csomagautomata hozzáadása", form=form)
+
+
+@bp.route("/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+@warehouse_required
+def edit(id):
+    parcel_locker = ParcelLocker.query.get_or_404(id)
+    form = EditParcelLockerForm(obj=parcel_locker)
+    if form.validate_on_submit():
+        form.populate_obj(parcel_locker)
+        db.session.commit()
+        flash("A csomagautomata sikeresen frissítve!", "success")
+        return redirect(url_for("parcel_locker.list"))
+    return render_template(
+        "parcel_locker/edit.html", title="Csomagautomata szerkesztése", form=form, parcel_locker=parcel_locker
+    )
+

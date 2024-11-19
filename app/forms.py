@@ -7,6 +7,7 @@ from wtforms import (
     FloatField,
     SelectField,
     DateField,
+    IntegerField,
 )
 from wtforms.validators import (
     DataRequired,
@@ -95,3 +96,34 @@ class CreatePackageForm(FlaskForm):
     recipient_address = StringField("Címzett címe", validators=[DataRequired()])
     delivery_deadline = DateField("Kézbesítési határidő", validators=[DataRequired()])
     submit = SubmitField("Csomag létrehozása")
+
+
+class CreateWarehouseForm(FlaskForm):
+    name = StringField("Név", validators=[DataRequired()])
+    address = StringField("Cím", validators=[DataRequired()])
+    capacity = IntegerField("Méret (mennyi csomag fér el összesen a raktárban)", validators=[DataRequired(), NumberRange(min=1)])
+    current_load = IntegerField("Jelenlegi terhelés (mennyi csomag van a raktárban)", validators=[DataRequired(), NumberRange(min=1)])
+    submit = SubmitField("Raktár létrehozása")
+
+
+class EditWarehouseForm(FlaskForm):
+    name = StringField("Név", validators=[DataRequired()])
+    address = StringField("Cím", validators=[DataRequired()])
+    capacity = IntegerField("Méret (mennyi csomag fér el összesen a raktárban)", validators=[DataRequired(), NumberRange(min=1)])
+    current_load = IntegerField("Jelenlegi terhelés (mennyi csomag van a raktárban)", validators=[DataRequired(), NumberRange(min=1)])
+    submit = SubmitField("Raktár módosítása")
+
+class CreateParcelLockerForm(FlaskForm):
+    location = StringField("Név", validators=[DataRequired()])
+    address = StringField("Cím", validators=[DataRequired()])
+    total_compartments = IntegerField("Méret (mennyi csomag fér el összesen a csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
+    available_compartments = IntegerField("Elérhető helyek (mennyi csomag fér még el csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
+    submit = SubmitField("Csomagautomata létrehozása")
+
+
+class EditParcelLockerForm(FlaskForm):
+    location = StringField("Név", validators=[DataRequired()])
+    address = StringField("Cím", validators=[DataRequired()])
+    total_compartments = IntegerField("Méret (mennyi csomag fér el összesen a csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
+    available_compartments = IntegerField("Elérhető helyek (mennyi csomag fér még el csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
+    submit = SubmitField("Csomagautomata módosítása")

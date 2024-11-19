@@ -1,6 +1,14 @@
 {% extends "base.html" %} {% block content %}
 <h1>Raktárak</h1>
 
+<div class="col-md-4">
+    <div class="form-inline">
+        <a href="{{ url_for('warehouse.create') }}" class="btn btn-success">Új raktár hozzáadása</a>
+    </div>
+</div>
+
+<br>
+
 <table class="table table-striped">
     <thead>
         <tr>
@@ -24,6 +32,7 @@
             <td>{{ warehouse.updated_at }}</td> -->
             <td>
                 <a href="{{ url_for('warehouse.show_packages_inside_warehouse', id=warehouse.id) }}" class="btn btn-sm btn-primary">Csomagok megtekintése</a>
+                <a href="{{ url_for('warehouse.edit', id=warehouse.id) }}" class="btn btn-sm btn-outline-secondary">Szerkesztés</a>
             </td>
         </tr>
         {% endfor %}

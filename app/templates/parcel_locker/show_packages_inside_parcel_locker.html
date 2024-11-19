@@ -4,7 +4,7 @@
 <div class="card shadow-sm">
     <div class="row mb-4">
         <div class="col-md-4">
-            <form action="{{ url_for('parcel_locker.show_packages_inside_parcer_locker', id=parcel_locker.id) }}" method="get" class="form-inline">
+            <form action="{{ url_for('parcel_locker.show_packages_inside_parcel_locker', id=parcel_locker.id) }}" method="get" class="form-inline">
                 <div class="form-group mr-2">
                     <select name="status" class="form-control p-2">
                         <option value="all" {% if current_filter == 'all' %}selected{% endif %}>Összes státusz</option>
@@ -21,7 +21,7 @@
             </form>
         </div>
         <div class="col-md-4">
-            <form action="{{ url_for('parcel_locker.show_packages_inside_parcer_locker', id=parcel_locker.id) }}" method="get" class="form-inline">
+            <form action="{{ url_for('parcel_locker.show_packages_inside_parcel_locker', id=parcel_locker.id) }}" method="get" class="form-inline">
                 <div class="form-group mr-2">
                     <input type="text" name="search" class="form-control" placeholder="Keresés..." value="{{ search_query }}">
                 </div>

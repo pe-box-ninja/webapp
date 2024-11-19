@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header text-white">
+            <i class="fas fa-edit mr-2"></i>
+            Csomagautomata módosítása
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group row">
+                    <label for="{{ form.location.id }}" class="col-sm-3 col-form-label">
+                        <i class="fa-solid fa-building"></i>
+                        {{ form.location.label.text }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form.location(class="form-control") }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="{{ form.address.id }}" class="col-sm-3 col-form-label">
+                        <i class="fas fa-home mr-2"></i>
+                        {{ form.address.label.text }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form.address(class="form-control py-2") }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="{{ form.total_compartments.id }}" class="col-sm-3 col-form-label">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        {{ form.total_compartments.label.text }}
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            {{ form.total_compartments(class="form-control") }}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="{{ form.available_compartments.id }}" class="col-sm-3 col-form-label">
+                        <i class="fa-solid fa-box"></i>
+                        {{ form.available_compartments.label.text }}
+                    </label>
+                    <div class="col-sm-9">
+                        {{ form.available_compartments(class="form-control") }}
+                    </div>
+                </div>
+                
+                <div class="form-group row">
+                    <div class="col-sm-9 offset-sm-3">
+                        {{ form.submit(class="btn btn-primary mr-2") }}
+                        <a href="{{ url_for('warehouse.list') }}" class="btn btn-secondary">
+                            <i class="fas fa-times mr-2"></i>
+                            Mégsem
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
