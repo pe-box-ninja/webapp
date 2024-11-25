@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from app.models import Warehouse
 from app.models import Assignment
 from app.models import Package, PackageStatus
@@ -17,7 +17,7 @@ bp = Blueprint("warehouse", __name__)
 def list():
     warehouses = Warehouse.query.all()
     return render_template(
-        "warehouse/warehouses_list.html", title="Raktárak", warehouses=warehouses
+        "warehouse/warehouses_list.html", title="Raktárak", warehouses=warehouses, current_user=current_user
     )
 
 @bp.route("warehouse/show_packages_inside_warehouse/<id>")

@@ -1,6 +1,7 @@
 {% extends "base.html" %} {% block content %}
 <h1>Csomagautomaták</h1>
 
+{% if current_user.is_admin() %}
 <div class="col-md-4">
     <div class="form-inline">
         <a href="{{ url_for('parcel_locker.create') }}" class="btn btn-success">Új csomagautomata hozzáadása</a>
@@ -8,6 +9,8 @@
 </div>
 
 <br>
+
+{% endif %}
 
 <table class="table table-striped">
     <thead>
@@ -34,7 +37,9 @@
                 <!-- <p>{{ parcel_locker.id }}</p>
                 <br> -->
                 <a href="{{ url_for('parcel_locker.show_packages_inside_parcel_locker', id=parcel_locker.id) }}" class="btn btn-sm btn-primary">Csomagok megtekintése</a>
+                {% if current_user.is_admin() %}
                 <a href="{{ url_for('parcel_locker.edit', id=parcel_locker.id) }}" class="btn btn-sm btn-outline-secondary">Szerkesztés</a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}
