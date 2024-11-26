@@ -21,7 +21,9 @@
                 <td>{{ courier.status }}</td>
                 <td>
                     <a href="{{ url_for('courier.view', id=courier.id) }}" class="btn btn-sm btn-primary">Megtekintés</a>
+                    {% if current_user.is_admin() %}
                     <a href="{{ url_for('courier.edit', id=courier.id) }}" class="btn btn-sm btn-secondary">Szerkesztés</a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
