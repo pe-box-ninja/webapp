@@ -15,9 +15,9 @@ from wtforms.validators import (
     EqualTo,
     ValidationError,
     NumberRange,
+    Length,
 )
-from app.models import User, PackageStatus
-
+from app.models import User, PackageStatus, CourierStatus
 
 class LoginForm(FlaskForm):
     username = StringField("Felhasználónév", validators=[DataRequired()])
@@ -127,3 +127,33 @@ class EditParcelLockerForm(FlaskForm):
     total_compartments = IntegerField("Méret (mennyi csomag fér el összesen a csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
     available_compartments = IntegerField("Elérhető helyek (mennyi csomag fér még el csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
     submit = SubmitField("Csomagautomata módosítása")
+
+class CreateCourierForm(FlaskForm):
+    id = IntegerField("Id", validators=[DataRequired()])
+    status = SelectField(
+        "Státusz",
+        choices=[(status, status) for status in CourierStatus.list()],
+        validators=[DataRequired()],
+    )
+    name = StringField("Név", validators=[DataRequired(), NumberRange(min=0.1)])
+    email = StringField("Email", validators=[DataRequired()])
+    phone = StringField("Telefonszám", validators=[DataRequired()])
+    current_location = StringField("Jelenlegi lokáció", validators=[DataRequired()])
+    working_hours = StringField("Munkaidő", validators=[DataRequired()])
+    capacity = FloatField("Kapacitás", validators=[DataRequired()])
+    created_at = DateField("Létrehozva", validators=[DataRequired()])
+    updated_at = DateField("Frissítve", validators=[DataRequired()])
+    submit = SubmitField("Futár létrehozása")
+
+class EditCourierForm(FlaskForm):
+    id = IntegerField("Azonosító", render_kw={"readonly": True})
+    status = SelectField("Státusz", choices=[("active", "Aktív"), ("inactive", "Inaktív")], validators=[DataRequired()])
+    name = StringField("Név", validators=[DataRequired(), Length(max=100)])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    phone = StringField("Telefon", validators=[DataRequired(), Length(max=15)])
+    current_location = StringField("Jelenlegi hely", validators=[DataRequired()])
+    working_hours = StringField("Munkaidő", validators=[DataRequired()])
+    capacity = IntegerField("Kapacitás", validators=[DataRequired()])
+    created_at = DateField("Létrehozva", render_kw={"readonly": True})
+    updated_at = DateField("Frissítve", render_kw={"readonly": True})
+    submit = SubmitField("Mentés")

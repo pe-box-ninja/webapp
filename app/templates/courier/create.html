@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>Futár Létrehozása</h1>
+  <form method="POST" action="{{ url_for('courier.create') }}">
+    {{ form.hidden_tag() }}
+
+    <div class="form-group">
+      {{ form.id.label }} {{ form.id(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+      {{ form.status.label }} {{ form.status(class="form-control p-1") }}
+    </div>
+
+    <div class="form-group">
+      {{ form.name.label }} {{ form.name(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+      {{ form.email.label }} {{ form.email(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+      {{ form.phone.label }} {{ form.phone(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+      {{ form.current_location.label }} {{ form.current_location(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+      {{ form.working_hours.label }} {{ form.working_hours(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+      {{ form.capacity.label }} {{ form.capacity(class="form-control") }}
+    </div>
+
+    <div class="form-group">
+      {{ form.created_at.label }} {{ form.created_at(class="form-control", type="date") }}
+    </div>
+
+    <div class="form-group">
+      {{ form.updated_at.label }} {{ form.updated_at(class="form-control", type="date") }}
+    </div>
+
+    {{ form.submit(class="btn btn-primary") }}
+  </form>
+</div>
+{% endblock %}

@@ -1,6 +1,16 @@
 from app import db
 from datetime import datetime
 
+class CourierStatus:
+    ACTIVE = "indulásra kész"
+    INACTIVE = "úton, pihen"
+
+
+    @staticmethod
+    def list():
+        return ["indulásra kész", "úton,pihen"]
+
+
 class Courier(db.Model):
     __tablename__ = 'courier'
     id = db.Column(db.Integer, primary_key=True)

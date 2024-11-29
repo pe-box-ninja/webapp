@@ -1,34 +1,92 @@
 {% extends "base.html" %}
+
 {% block content %}
-<div class="container">
+<div class="container mt-4">
     <h1 class="mb-4">Futárok</h1>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Azonosító</th>
-                <th>Név</th>
-                <th>Email</th>
-                <th>Státusz</th>
-                <th>Műveletek</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for courier in couriers %}
-            <tr>
-                <td>{{ courier.id }}</td>
-                <td>{{ courier.name }}</td>
-                <td>{{ courier.email }}</td>
-                <td>{{ courier.status }}</td>
-                <td>
-                    <a href="{{ url_for('courier.view', id=courier.id) }}" class="btn btn-sm btn-primary">Megtekintés</a>
-                    {% if current_user.is_admin() %}
-                    <a href="{{ url_for('courier.edit', id=courier.id) }}" class="btn btn-sm btn-secondary">Szerkesztés</a>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{{ url_for('courier.create') }}" class="btn btn-success">Új futár hozzáadása</a>
+
+    <!-- Filters and search section -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <form action="{{ url_for('courier.list') }}" method="get" class="form-inline">
+                <div class="form-group mr-2">
+                    <select name="status" class="form-control p-2">
+                        <option value="all" {% if status_filter =='all' %}selected{% endif %} >
+                        Összes státusz</option>
+                        <option value="active" {% if status_filter =='active' %}selected{% endif %}>Aktív</option>
+                        <option value="inactive" {% if status_filter =='inactive' %}selected{% endif %}>Inaktív</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Szűrés</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <form action="{{ url_for('courier.list') }}" method="get" class="form-inline">
+                <div class="form-group mr-2">
+                    <input type="text" name="search" class="form-control" placeholder="Keresés..." value="{{ search_query }}">
+                </div>
+                <button type="submit" class="btn btn-primary">Keresés</button>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="form-inline">
+                <a href="{{ url_for('courier.create') }}" class="btn btn-success">Új futár hozzáadása</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Explanation Card -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Státusz magyarázat
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled">
+                <li><span class="badge badge-success">Aktív</span> - A futár elérhető a szállításhoz</li>
+                <li><span class="badge badge-secondary">Inaktív</span> - A futár jelenleg nem dolgozik</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Couriers Table -->
+    <div class="card shadow-sm">
+        <div class="card-header">
+            Futárok listája
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="small">Név</th>
+                            <th scope="col" class="small">Email</th>
+                            <th scope="col" class="small">Telefon</th>
+                            <th scope="col" class="small">Jelenlegi hely</th>
+                            <th scope="col" class="small">Státusz</th>
+                            <th scope="col" class="small">Műveletek</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for courier in couriers %}
+                        <tr>
+                            <td>{{ courier.name }}</td>
+                            <td>{{ courier.email }}</td>
+                            <td>{{ courier.phone }}</td>
+                            <td>{{ courier.current_location }}</td>
+                            <td>
+                                <span class="badge px-2 py-2 badge-{{ 'success' if courier.status == 'active' else 'secondary' }}">
+                                    {{ 'Aktív' if courier.status == 'active' else 'Inaktív' }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('courier.view', id=courier.id) }}" class="btn btn-sm btn-outline-primary">Megtekintés</a>
+                                <a href="{{ url_for('courier.edit', id=courier.id) }}" class="btn btn-sm btn-outline-secondary">Szerkesztés</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
