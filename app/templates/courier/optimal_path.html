@@ -1,5 +1,59 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
 
-<h1>Optimális útvonal meghatározása</h1>
+{% block content %}
+<div class="container mt-5">
+    <div class="jumbotron">
+        <h1 class="display-4">Courier Route Optimization</h1>
+        <p class="lead">View the list of addresses, their coordinates, and the optimized route for deliveries.</p>
+    </div>
 
+    <!-- Addresses and Coordinates Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Addresses and Coordinates</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Latitude</th>
+                        <th scope="col">Longitude</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for address in addresses %}
+                    <tr>
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ address.address }}</td>
+                        <td>{{ address.lat }}</td>
+                        <td>{{ address.lon }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">No addresses found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Route Optimization Results Section -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Optimized Route for Courier</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Steps to deliver packages:</h6>
+            <ul>
+                {% for step in assignments[0].steps %}
+                <li>
+                    <strong>Current Address:</strong> {{ step.current }}<br>
+                    <strong>Chosen Address:</strong> {{ step.chosen }}<br>
+                    <strong>Distance to Chosen Address:</strong> {{ step.distance }} km<br>
+                    <strong>Total Distance Traveled:</strong> {{ step.total_distance }} km
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
 {% endblock %}
