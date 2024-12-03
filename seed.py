@@ -37,9 +37,68 @@ VESZPREM_ADDRESSES = [
     "Kossuth Lajos utca 14., 8420 Zirc",
 ]
 
+SENDER_ADDRESSES = [
+    "Egyetem utca 1., 8200 Veszprém",
+    "Óváros tér 9., 8200 Veszprém",
+    "Kossuth Lajos utca 21., 8200 Veszprém",
+    "Wartha Vince utca 1., 8200 Veszprém",
+    "Budapest út 47., 8200 Veszprém",
+    "Cholnoky Jenő utca 22., 8200 Veszprém",
+    "Haszkovó utca 18., 8200 Veszprém",
+    "Jutasi út 59., 8200 Veszprém",
+    "Március 15. utca 5., 8200 Veszprém",
+    "Munkácsy Mihály utca 3., 8200 Veszprém",
+]
 
-def get_random_address():
-    return random.choice(VESZPREM_ADDRESSES)
+RECIPIENT_ADDRESSES = [
+    "Petőfi Sándor utca 8., 8500 Pápa",
+    "Fő utca 12., 8500 Pápa",
+    "Jókai Mór utca 5., 8500 Pápa",
+    "Kossuth Lajos utca 27., 8100 Várpalota",
+    "Szent István út 15., 8100 Várpalota",
+    "Szabadság tér 1., 8220 Balatonalmádi",
+    "Baross Gábor út 44., 8220 Balatonalmádi",
+    "Petőfi Sándor utca 11., 8230 Balatonfüred",
+    "Zákonyi Ferenc utca 2., 8230 Balatonfüred",
+    "Kossuth Lajos utca 14., 8420 Zirc",
+]
+
+
+def get_address_with_city():
+    address = get_random_address()
+    address_parts = address.split(" ")
+    city = (
+        address_parts[len(address.split(" ")) - 1]
+        .strip()
+        .replace("é", "")
+        .replace("á", "")
+        .replace("a", "")
+        .replace("ö", "")
+        .replace("ü", "")
+        .upper()
+    )
+    return city, address
+
+
+def get_random_address(type=None):
+    if type == "sender":
+        return random.choice(SENDER_ADDRESSES)
+    elif type == "recipient":
+        return random.choice(RECIPIENT_ADDRESSES)
+    else:
+        return random.choice(VESZPREM_ADDRESSES)
+
+
+def get_random_status():
+    r = random.random()
+    if r < 0.1:
+        return PackageStatus.RETURN
+    elif r < 0.5:
+        return PackageStatus.DELIVERED
+    else:
+        return (
+            PackageStatus.PENDING if random.random() > 0.5 else PackageStatus.IN_TRANSIT
+        )
 
 
 def seed_users(num_users=50):
@@ -65,8 +124,14 @@ def seed_users(num_users=50):
         db.session.add(test_user)
 
     for _ in range(num_users):
+        username = f"{fake.user_name()}_{random.randint(1000, 9999)}"
+        email = (
+            f"{username}@{random.choice(['gmail', 'yahoo', 'hotmail', 'outlook'])}.com"
+        )
         user = User(
-            username=fake.user_name(), email=fake.email(), role=random.choice(roles)
+            username=username,
+            email=email,
+            role=random.choice(roles),
         )
         user.set_password(MASTER_PASSWORD)
         db.session.add(user)
@@ -74,15 +139,14 @@ def seed_users(num_users=50):
 
 
 def seed_packages(num_packages=100):
-    statuses = PackageStatus.list()
     for tracking_number in range(num_packages):
         package = Package(
-            tracking_number=f"BN{tracking_number}",
-            status=random.choice(statuses),
+            tracking_number=f"BN{fake.unique.random_int(min=1000, max=99999)}",
+            status=get_random_status(),
             weight=round(random.uniform(0.1, 20.0), 2),
             dimensions=f"{random.randint(1, 100)}x{random.randint(1, 100)}x{random.randint(1, 100)}",
-            sender_address=fake.address(),
-            recipient_address=fake.address(),
+            sender_address=get_random_address("sender"),
+            recipient_address=get_random_address("recipient"),
             delivery_deadline=fake.future_date(end_date="+30d"),
             created_at=fake.date_time_this_year(),
             updated_at=fake.date_time_this_year(),
@@ -93,13 +157,21 @@ def seed_packages(num_packages=100):
 
 def seed_couriers(num_couriers=20):
     statuses = ["available", "on_delivery", "off_duty"]
+    city2number = {}
+
     for _ in range(num_couriers):
+        city, address = get_address_with_city()
+        if city not in city2number:
+            city2number[city] = 1
+        else:
+            city2number[city] += 1
+
         courier = Courier(
             name=fake.name(),
             email=fake.email(),
             phone=fake.phone_number(),
             status=random.choice(statuses),
-            current_location="Veszprém",
+            current_location=city,
             working_hours=f"{random.randint(6, 10)}:00 - {random.randint(14, 20)}:00",
             capacity=round(random.uniform(50, 200), 2),
             created_at=fake.date_time_this_year(),
@@ -119,10 +191,28 @@ def seed_warehouses(num_warehouses=10):
         "Lóczy Lajos utca 30., 8230 Balatonfüred",
         "Ipari Park, 8420 Zirc",
     ]
+    city2number = {}
 
     for address in warehouse_addresses[:num_warehouses]:
+        address_parts = address.split(" ")
+        city = (
+            address_parts[len(address_parts) - 1]
+            .strip()
+            .replace("é", "")
+            .replace("á", "")
+            .replace("a", "")
+            .replace("ö", "")
+            .replace("ü", "")
+            .upper()
+        )
+        if city not in city2number:
+            city2number[city] = 1
+        else:
+            city2number[city] += 1
+        city_id = f"{city}-{city2number[city]}"
+
         warehouse = Warehouse(
-            name=f"BoxNinja Raktár - {address.split(',')[1].strip()}",
+            name=f"BNR-{city_id}",
             address=address,
             capacity=random.randint(1000, 10000),
             current_load=random.randint(0, 1000),
@@ -134,10 +224,18 @@ def seed_warehouses(num_warehouses=10):
 
 
 def seed_parcel_lockers(num_lockers=30):
+    city2number = {}
+
     for _ in range(num_lockers):
+        city, address = get_address_with_city()
+        if city not in city2number:
+            city2number[city] = 1
+        else:
+            city2number[city] += 1
+
         locker = ParcelLocker(
-            location="Veszprém",
-            address=get_random_address(),
+            location=f"{city}-{city2number[city]}",
+            address=address,
             total_compartments=random.randint(20, 100),
             available_compartments=random.randint(0, 20),
             created_at=fake.date_time_this_year(),
