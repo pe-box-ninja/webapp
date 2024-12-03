@@ -109,6 +109,23 @@ h1 {
     transform: scale(1.05);
 }
 
+.cta-alt-alt-button {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background-color: #915337;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.cta-alt-alt-button:hover {
+    background-color: #ae7054;
+    color: #fff;
+    transform: scale(1.05);
+}
+
 /* Features section styles */
 .features {
     padding: 4rem 2rem;
