@@ -15,11 +15,11 @@
         <div class="row">
           <div class="col-md-6 mb-3">
             <h6>{{ icon('hashtag') }} {{ form.tracking_number.label.text }}</h6>
-            {{ form.tracking_number(class="form-control", placeholder="Írja be a nyomkövetési számot") }}
+            {{ form.tracking_number(class="form-control", disabled=not current_user.is_authenticated, placeholder="Írja be a nyomkövetési számot") }}
           </div>
           <div class="col-md-6 mb-3">
             <h6>{{ icon('info-circle') }} {{ form.status.label.text }}</h6>
-            {{ form.status(class="form-control p-1") }}
+            {{ form.status(class="form-control p-1 text-uppercase", disabled=not current_user.is_authenticated) }}
           </div>
           <div class="col-md-6 mb-3">
             <h6>{{ icon('weight') }} {{ form.weight.label.text }}</h6>
@@ -51,10 +51,10 @@
     </div>
     
     <div class="text-center mt-4">
+      {{ form.submit(class="btn btn-primary") }}
       <a href="{{ url_for('package.list') }}" class="btn btn-secondary me-2">
         {{ icon('times') }} Mégsem
       </a>
-      {{ form.submit(class="btn btn-primary") }}
     </div>
   </form>
 </div>
