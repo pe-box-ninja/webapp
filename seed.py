@@ -13,7 +13,33 @@ import random
 
 from constants import MASTER_PASSWORD, MASTER_ADMIN_PASSWORD
 
-fake = Faker()
+fake = Faker("hu_HU")
+VESZPREM_ADDRESSES = [
+    "Egyetem utca 1., 8200 Veszprém",
+    "Óváros tér 9., 8200 Veszprém",
+    "Kossuth Lajos utca 21., 8200 Veszprém",
+    "Wartha Vince utca 1., 8200 Veszprém",
+    "Budapest út 47., 8200 Veszprém",
+    "Cholnoky Jenő utca 22., 8200 Veszprém",
+    "Haszkovó utca 18., 8200 Veszprém",
+    "Jutasi út 59., 8200 Veszprém",
+    "Március 15. utca 5., 8200 Veszprém",
+    "Munkácsy Mihály utca 3., 8200 Veszprém",
+    "Petőfi Sándor utca 8., 8500 Pápa",
+    "Fő utca 12., 8500 Pápa",
+    "Jókai Mór utca 5., 8500 Pápa",
+    "Kossuth Lajos utca 27., 8100 Várpalota",
+    "Szent István út 15., 8100 Várpalota",
+    "Szabadság tér 1., 8220 Balatonalmádi",
+    "Baross Gábor út 44., 8220 Balatonalmádi",
+    "Petőfi Sándor utca 11., 8230 Balatonfüred",
+    "Zákonyi Ferenc utca 2., 8230 Balatonfüred",
+    "Kossuth Lajos utca 14., 8420 Zirc",
+]
+
+
+def get_random_address():
+    return random.choice(VESZPREM_ADDRESSES)
 
 
 def seed_users(num_users=50):
@@ -73,7 +99,7 @@ def seed_couriers(num_couriers=20):
             email=fake.email(),
             phone=fake.phone_number(),
             status=random.choice(statuses),
-            current_location=fake.city(),
+            current_location="Veszprém",
             working_hours=f"{random.randint(6, 10)}:00 - {random.randint(14, 20)}:00",
             capacity=round(random.uniform(50, 200), 2),
             created_at=fake.date_time_this_year(),
@@ -84,10 +110,20 @@ def seed_couriers(num_couriers=20):
 
 
 def seed_warehouses(num_warehouses=10):
-    for _ in range(num_warehouses):
+    warehouse_addresses = [
+        "Házgyári út 1., 8200 Veszprém",
+        "Pápai út 34., 8200 Veszprém",
+        "Ipar utca 2., 8100 Várpalota",
+        "Gyártelep utca 1., 8500 Pápa",
+        "Fűzfői út 15., 8220 Balatonalmádi",
+        "Lóczy Lajos utca 30., 8230 Balatonfüred",
+        "Ipari Park, 8420 Zirc",
+    ]
+
+    for address in warehouse_addresses[:num_warehouses]:
         warehouse = Warehouse(
-            name=fake.company(),
-            address=fake.address(),
+            name=f"BoxNinja Raktár - {address.split(',')[1].strip()}",
+            address=address,
             capacity=random.randint(1000, 10000),
             current_load=random.randint(0, 1000),
             created_at=fake.date_time_this_year(),
@@ -100,8 +136,8 @@ def seed_warehouses(num_warehouses=10):
 def seed_parcel_lockers(num_lockers=30):
     for _ in range(num_lockers):
         locker = ParcelLocker(
-            location=fake.city(),
-            address=fake.address(),
+            location="Veszprém",
+            address=get_random_address(),
             total_compartments=random.randint(20, 100),
             available_compartments=random.randint(0, 20),
             created_at=fake.date_time_this_year(),
