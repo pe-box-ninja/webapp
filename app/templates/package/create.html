@@ -1,34 +1,97 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% from "design-system.html" import icon %}
+
+{% block content %}
 <div class="container mt-4">
-  <h1>Csomagküldés</h1>
-  <form method="POST" action="{{ url_for('package.create') }}">
-    {{ form.hidden_tag() }}
-    <div class="form-group">
-      {{ form.tracking_number.label }} {{
-      form.tracking_number(class="form-control") }}
+  <h1 class="mb-4">Csomagküldés</h1>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0 text-white">{{ icon('box') }} Csomag Adatai</h5>
     </div>
-    <div class="form-group">
-      {{ form.status.label }} {{ form.status(class="form-control p-1") }}
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('package.create') }}">
+        {{ form.hidden_tag() }}
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('hashtag') }} {{ form.tracking_number.label.text }}</h6>
+            {{ form.tracking_number(class="form-control", placeholder="Írja be a nyomkövetési számot") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('info-circle') }} {{ form.status.label.text }}</h6>
+            {{ form.status(class="form-control") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('weight') }} {{ form.weight.label.text }}</h6>
+            <div class="input-group">
+              {{ form.weight(class="form-control", placeholder="Írja be a csomag súlyát") }}
+              <div class="input-group-append">
+                <span class="input-group-text">kg</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('ruler-combined') }} {{ form.dimensions.label.text }}</h6>
+            {{ form.dimensions(class="form-control", placeholder="pl.: 30x20x15 cm") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('map-marker-alt') }} {{ form.sender_address.label.text }}</h6>
+            {{ form.sender_address(class="form-control", placeholder="Írja be a feladó címét") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('map-marker-alt') }} {{ form.recipient_address.label.text }}</h6>
+            {{ form.recipient_address(class="form-control", placeholder="Írja be a címzett címét") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('calendar-alt') }} {{ form.delivery_deadline.label.text }}</h6>
+            {{ form.delivery_deadline(class="form-control", type="date") }}
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      {{ form.weight.label }} {{ form.weight(class="form-control") }}
+    
+    <div class="text-center mt-4">
+      <a href="{{ url_for('package.list') }}" class="btn btn-secondary me-2">
+        {{ icon('times') }} Mégsem
+      </a>
+      {{ form.submit(class="btn btn-primary") }}
     </div>
-    <div class="form-group">
-      {{ form.dimensions.label }} {{ form.dimensions(class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ form.sender_address.label }} {{
-      form.sender_address(class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ form.recipient_address.label }} {{
-      form.recipient_address(class="form-control") }}
-    </div>
-    <div class="form-group">
-      {{ form.delivery_deadline.label }} {{
-      form.delivery_deadline(class="form-control", type="date") }}
-    </div>
-    {{ form.submit(class="btn btn-primary") }}
   </form>
 </div>
+
+<style>
+.card {
+  border: none;
+}
+
+.card-header h5 {
+  color: #333;
+  font-weight: 500;
+}
+
+.form-control {
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.form-control:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+}
+
+h6 {
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1.5rem;
+}
+
+.me-2 {
+  margin-right: 0.5rem;
+}
+</style>
 {% endblock %}
