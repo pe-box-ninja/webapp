@@ -6,14 +6,18 @@ from app import db
 from app.forms import EditPackageForm, CreatePackageForm
 from flask import redirect, url_for
 from sqlalchemy import or_
+from faker import Faker
+from flask_login import current_user
 
+
+fake = Faker()
 bp = Blueprint("package", __name__)
 
 
 @bp.route("/create", methods=["GET", "POST"])
 def create():
     form = CreatePackageForm()
-    if form.validate_on_submit():
+    if request.method == "POST":
         package = Package(
             tracking_number=form.tracking_number.data,
             status=form.status.data,
@@ -25,9 +29,26 @@ def create():
         )
         db.session.add(package)
         db.session.commit()
-        flash("Csomagküldés kezdeményezve!", "success")
-        return redirect(url_for("package.list"))
-    return render_template("package/create.html", title="Csomagküldés", form=form)
+        flash(
+            "Csomagküldés kezdeményezve! Követési szám: " + package.tracking_number,
+            "success",
+        )
+
+        if current_user.is_authenticated:
+            return redirect(url_for("package.list"))
+        return redirect(url_for("package.track"))
+
+    # Generate a unique tracking number until it's not taken
+    unique_tracking_number = f"BN{fake.unique.random_int(min=100, max=99999999)}"
+    while Package.query.filter_by(tracking_number=unique_tracking_number).first():
+        unique_tracking_number = f"BN{fake.unique.random_int(min=100, max=99999999)}"
+
+    return render_template(
+        "package/create.html",
+        title="Csomagküldés",
+        form=form,
+        tracking_number=unique_tracking_number,
+    )
 
 
 @bp.route("/list")
