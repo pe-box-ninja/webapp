@@ -80,6 +80,10 @@ footer {
     margin-top: 40px;
 }
 
+select.form-control {
+    padding: 15px;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 0 10px;
