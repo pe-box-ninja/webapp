@@ -211,11 +211,12 @@ def seed_warehouses(num_warehouses=10):
             city2number[city] += 1
         city_id = f"{city}-{city2number[city]}"
 
+        capacity = random.randint(100, 500)
         warehouse = Warehouse(
             name=f"BNR-{city_id}",
             address=address,
-            capacity=random.randint(1000, 10000),
-            current_load=random.randint(0, 1000),
+            capacity=capacity,
+            current_load=0,  # Start with 0, will be updated in seed_assignments
             created_at=fake.date_time_this_year(),
             updated_at=fake.date_time_this_year(),
         )
@@ -233,11 +234,12 @@ def seed_parcel_lockers(num_lockers=30):
         else:
             city2number[city] += 1
 
+        total_compartments = random.randint(20, 100)
         locker = ParcelLocker(
             location=f"{city}-{city2number[city]}",
             address=address,
-            total_compartments=random.randint(20, 100),
-            available_compartments=random.randint(0, 20),
+            total_compartments=total_compartments,
+            available_compartments=total_compartments,
             created_at=fake.date_time_this_year(),
             updated_at=fake.date_time_this_year(),
         )
@@ -247,28 +249,148 @@ def seed_parcel_lockers(num_lockers=30):
 
 def seed_assignments(num_assignments=150):
     packages = Package.query.all()
+    if not packages:
+        print("No packages to assign!")
+        return
+
     couriers = Courier.query.all()
     warehouses = Warehouse.query.all()
     lockers = ParcelLocker.query.all()
     statuses = ["assigned", "in_progress", "completed"]
 
-    used_warehouse = random.choice(warehouses).id
-    used_parcel_locker = random.choice(lockers).id
-    used_storage = used_warehouse if random.random() > 0.5 else used_parcel_locker
+    # Reset counters
+    for warehouse in warehouses:
+        warehouse.current_load = 0
+    for locker in lockers:
+        locker.available_compartments = locker.total_compartments
 
-    for _ in range(num_assignments):
-        assignment = Assignment(
-            package_id=random.choice(packages).id,
-            courier_id=random.choice(couriers).id,
-            warehouse_id=(used_warehouse if used_storage == used_warehouse else None),
-            parcel_locker_id=(
-                used_parcel_locker if used_storage == used_parcel_locker else None
-            ),
-            status=random.choice(statuses),
-            assigned_at=fake.date_time_this_year(),
-            completed_at=fake.date_time_this_year() if random.random() > 0.5 else None,
-        )
-        db.session.add(assignment)
+    # First ensure minimum packages for warehouses (10 each)
+    for warehouse in warehouses:
+        packages_needed = 10
+        packages_to_assign = packages[:packages_needed]
+
+        for package in packages_to_assign:
+            assignment = Assignment(
+                package_id=package.id,
+                courier_id=random.choice(couriers).id,
+                warehouse_id=warehouse.id,
+                parcel_locker_id=None,
+                status=random.choice(statuses),
+                assigned_at=fake.date_time_this_year(),
+                completed_at=(
+                    fake.date_time_this_year() if random.random() > 0.5 else None
+                ),
+            )
+            db.session.add(assignment)
+            warehouse.current_load += 1
+            packages.remove(package)
+
+    # Then ensure minimum packages for parcel lockers (10 each)
+    for locker in lockers:
+        packages_needed = min(10, locker.total_compartments)
+        packages_to_assign = packages[:packages_needed]
+
+        for package in packages_to_assign:
+            assignment = Assignment(
+                package_id=package.id,
+                courier_id=random.choice(couriers).id,
+                warehouse_id=None,
+                parcel_locker_id=locker.id,
+                status=random.choice(statuses),
+                assigned_at=fake.date_time_this_year(),
+                completed_at=(
+                    fake.date_time_this_year() if random.random() > 0.5 else None
+                ),
+            )
+            db.session.add(assignment)
+            locker.available_compartments -= 1
+            packages.remove(package)
+
+    # Distribute remaining packages randomly between warehouses and lockers
+    while packages:
+        package = packages[0]
+        if random.random() > 0.5:
+            # Try to assign to a warehouse
+            available_warehouses = [
+                w for w in warehouses if w.current_load < w.capacity
+            ]
+            if available_warehouses:
+                warehouse = random.choice(available_warehouses)
+                assignment = Assignment(
+                    package_id=package.id,
+                    courier_id=random.choice(couriers).id,
+                    warehouse_id=warehouse.id,
+                    parcel_locker_id=None,
+                    status=random.choice(statuses),
+                    assigned_at=fake.date_time_this_year(),
+                    completed_at=(
+                        fake.date_time_this_year() if random.random() > 0.5 else None
+                    ),
+                )
+                db.session.add(assignment)
+                warehouse.current_load += 1
+                packages.remove(package)
+                continue
+
+        # Try to assign to a parcel locker
+        available_lockers = [l for l in lockers if l.available_compartments > 0]
+        if available_lockers:
+            locker = random.choice(available_lockers)
+            assignment = Assignment(
+                package_id=package.id,
+                courier_id=random.choice(couriers).id,
+                warehouse_id=None,
+                parcel_locker_id=locker.id,
+                status=random.choice(statuses),
+                assigned_at=fake.date_time_this_year(),
+                completed_at=(
+                    fake.date_time_this_year() if random.random() > 0.5 else None
+                ),
+            )
+            db.session.add(assignment)
+            locker.available_compartments -= 1
+            packages.remove(package)
+        else:
+            # If no space left in lockers, try warehouses again
+            available_warehouses = [
+                w for w in warehouses if w.current_load < w.capacity
+            ]
+            if available_warehouses:
+                warehouse = random.choice(available_warehouses)
+                assignment = Assignment(
+                    package_id=package.id,
+                    courier_id=random.choice(couriers).id,
+                    warehouse_id=warehouse.id,
+                    parcel_locker_id=None,
+                    status=random.choice(statuses),
+                    assigned_at=fake.date_time_this_year(),
+                    completed_at=(
+                        fake.date_time_this_year() if random.random() > 0.5 else None
+                    ),
+                )
+                db.session.add(assignment)
+                warehouse.current_load += 1
+                packages.remove(package)
+            else:
+                # No space left anywhere
+                print(
+                    f"Warning: Could not assign package {package.id} - no space available"
+                )
+                break
+
+    # Verify and update counters based on actual assignments
+    for warehouse in warehouses:
+        actual_count = Assignment.query.filter_by(
+            warehouse_id=warehouse.id, completed_at=None
+        ).count()
+        warehouse.current_load = actual_count
+
+    for locker in lockers:
+        assigned_count = Assignment.query.filter_by(
+            parcel_locker_id=locker.id, completed_at=None
+        ).count()
+        locker.available_compartments = locker.total_compartments - assigned_count
+
     db.session.commit()
 
 
