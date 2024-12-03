@@ -11,8 +11,6 @@ bp = Blueprint("package", __name__)
 
 
 @bp.route("/create", methods=["GET", "POST"])
-@login_required
-@warehouse_required
 def create():
     form = CreatePackageForm()
     if form.validate_on_submit():
