@@ -18,11 +18,11 @@
                     <select name="status" class="form-control p-1">
                         <option value="all" {% if current_filter == 'all' %}selected{% endif %}>Összes státusz</option>
                         {% for status in PackageStatus.list() %}
-                        {% if not warehouse_id or status != "kézbesítve" %}
-                            <option value="{{ status }}" {% if current_filter == status %}selected{% endif %}>
-                                {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[status] }}
-                            </option>
-                        {% endif %}
+                            {% if not warehouse_id or status != "kézbesítve" %}
+                                <option value="{{ status }}" {% if current_filter == status %}selected{% endif %}>
+                                    {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[status] }}
+                                </option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                     <div class="input-group-append">

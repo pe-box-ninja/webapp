@@ -138,7 +138,7 @@ def seed_users(num_users=50):
     db.session.commit()
 
 
-def seed_packages(num_packages=100):
+def seed_packages(num_packages=500):
     for tracking_number in range(num_packages):
         package = Package(
             tracking_number=f"BN{fake.unique.random_int(min=1000, max=99999)}",
@@ -211,7 +211,7 @@ def seed_warehouses(num_warehouses=10):
             city2number[city] += 1
         city_id = f"{city}-{city2number[city]}"
 
-        capacity = random.randint(100, 500)
+        capacity = random.randint(10, 50)
         warehouse = Warehouse(
             name=f"BNR-{city_id}",
             address=address,
@@ -224,7 +224,7 @@ def seed_warehouses(num_warehouses=10):
     db.session.commit()
 
 
-def seed_parcel_lockers(num_lockers=30):
+def seed_parcel_lockers(num_lockers=10):
     city2number = {}
 
     for _ in range(num_lockers):
@@ -234,7 +234,7 @@ def seed_parcel_lockers(num_lockers=30):
         else:
             city2number[city] += 1
 
-        total_compartments = random.randint(20, 100)
+        total_compartments = random.randint(5, 20)
         locker = ParcelLocker(
             location=f"{city}-{city2number[city]}",
             address=address,
@@ -266,8 +266,8 @@ def seed_assignments(num_assignments=150):
 
     # First ensure minimum packages for warehouses (10 each)
     for warehouse in warehouses:
-        packages_needed = 10
-        packages_to_assign = packages[:packages_needed]
+        packages_needed = 10 + random.randint(0, warehouse.capacity - 1)
+        packages_to_assign = [packages.pop() for _ in range(packages_needed)]
 
         for package in packages_to_assign:
             assignment = Assignment(
@@ -283,12 +283,11 @@ def seed_assignments(num_assignments=150):
             )
             db.session.add(assignment)
             warehouse.current_load += 1
-            packages.remove(package)
 
     # Then ensure minimum packages for parcel lockers (10 each)
     for locker in lockers:
         packages_needed = min(10, locker.total_compartments)
-        packages_to_assign = packages[:packages_needed]
+        packages_to_assign = [packages.pop() for _ in range(packages_needed)]
 
         for package in packages_to_assign:
             assignment = Assignment(
@@ -304,7 +303,6 @@ def seed_assignments(num_assignments=150):
             )
             db.session.add(assignment)
             locker.available_compartments -= 1
-            packages.remove(package)
 
     # Distribute remaining packages randomly between warehouses and lockers
     while packages:
@@ -408,12 +406,17 @@ def clean_database():
 
 def seed_database():
     clean_database()
-    print("Seeding database...")
+    print("Seeding users...")
     seed_users()
+    print("Seeding packages...")
     seed_packages()
+    print("Seeding couriers...")
     seed_couriers()
+    print("Seeding warehouses...")
     seed_warehouses()
+    print("Seeding parcel lockers...")
     seed_parcel_lockers()
+    print("Seeding assignments...")
     seed_assignments()
     print("Database seeded successfully!")
 

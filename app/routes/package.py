@@ -79,14 +79,11 @@ def list():
 
     if warehouse_id:
         warehouse = Warehouse.query.get_or_404(warehouse_id)
-        query = query.join(Assignment).filter(
-            Assignment.warehouse_id == warehouse_id, Package.status != "kézbesítve"
-        )
+        query = query.join(Assignment).filter(Assignment.warehouse_id == warehouse_id)
     elif parcel_locker_id:
         parcel_locker = ParcelLocker.query.get_or_404(parcel_locker_id)
         query = query.join(Assignment).filter(
-            Assignment.parcel_locker_id == parcel_locker_id,
-            Package.status != "kézbesítve",
+            Assignment.parcel_locker_id == parcel_locker_id
         )
 
     packages = query.all()
