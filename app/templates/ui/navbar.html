@@ -7,7 +7,7 @@
         height="30"
         class="d-inline-block align-top mr-2"
       />
-      BoxNinja
+      <span>BoxNinja</span>
     </a>
     <button
       class="navbar-toggler"
@@ -24,18 +24,28 @@
       <ul class="navbar-nav mr-auto">
         {% if current_user.is_authenticated and (current_user.is_warehouse() or
         current_user.is_courier() or current_user.is_admin() ) %}
-        <!--
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('main.dashboard') }}">
-                        <i class="fas fa-tachometer-alt mr-1"></i>
-                        Irányítópult
-                    </a>
-                </li>
-                -->
+
+        <li class="nav-item">
+          <a
+            class="nav-link font-weight-bold"
+            href="{{ url_for('package.create') }}"
+          >
+            <i class="fas fa-truck-ramp-box mr-1"></i>
+            Csomagküldés
+          </a>
+        </li>
+
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('package.list') }}">
             <i class="fas fa-box mr-1"></i>
             Csomagok
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('parcel_locker.list') }}">
+            <i class="fas fa-door-closed mr-1"></i>
+            Csomagautomaták
           </a>
         </li>
 
@@ -54,12 +64,6 @@
             Raktárak
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('parcel_locker.list') }}">
-            <i class="fas fa-door-closed mr-1"></i>
-            Csomagautomaták
-          </a>
-        </li>
 
         {% if current_user.is_courier() %}
         <li class="nav-item">
@@ -76,9 +80,7 @@
           </a>
         </li>
 
-        {% endif %}
-
-        {% elif current_user.is_authenticated %}
+        {% endif %} {% elif current_user.is_authenticated %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('package.send') }}">
             <i class="fas fa-truck-ramp-box mr-1"></i>
@@ -102,8 +104,7 @@
             Admin
           </a>
         </li>
-        {% endif %} 
-        {% if current_user.is_authenticated %}
+        {% endif %} {% if current_user.is_authenticated %}
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
@@ -121,14 +122,6 @@
             class="dropdown-menu dropdown-menu-right"
             aria-labelledby="navbarDropdown"
           >
-            <a class="dropdown-item" href="{{ url_for('user.profile') }}">
-              <i class="fas fa-id-card mr-1"></i>
-              Profil
-            </a>
-            <a class="dropdown-item" href="{{ url_for('user.settings') }}">
-              <i class="fas fa-cog mr-1"></i>
-              Beállítások
-            </a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
               <i class="fas fa-sign-out-alt mr-1"></i>

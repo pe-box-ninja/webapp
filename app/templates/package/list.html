@@ -18,11 +18,11 @@
                     <select name="status" class="form-control p-1">
                         <option value="all" {% if current_filter == 'all' %}selected{% endif %}>Összes státusz</option>
                         {% for status in PackageStatus.list() %}
-                        {% if not warehouse_id or status != "kézbesítve" %}
-                            <option value="{{ status }}" {% if current_filter == status %}selected{% endif %}>
-                                {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[status] }}
-                            </option>
-                        {% endif %}
+                            {% if not warehouse_id or status != "kézbesítve" %}
+                                <option value="{{ status }}" {% if current_filter == status %}selected{% endif %}>
+                                    {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[status] }}
+                                </option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                     <div class="input-group-append">
@@ -70,7 +70,6 @@
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th scope="col" class="small">{{ icon('hashtag') }} Azonosító</th>
                             <th scope="col" class="small">{{ icon('barcode') }} Nyomkövetési szám</th>
                             <th scope="col" class="small">{{ icon('box') }} Státusz</th>
                             <th scope="col" class="small">{{ icon('weight-scale') }} Súly</th>
@@ -80,7 +79,6 @@
                     <tbody>
                         {% for package in packages %}
                         <tr>
-                            <td class="small">{{ package.id }}</td>
                             <td class="small font-weight-bold">{{ package.tracking_number }}</td>
                             <td>
                                 <span class="badge px-2 py-1 badge-{{ {'függőben': 'warning', 'szállítás alatt': 'primary', 'kézbesítve': 'success', 'visszaküldve': 'danger'}[package.status] }}">

@@ -13,7 +13,92 @@ import random
 
 from constants import MASTER_PASSWORD, MASTER_ADMIN_PASSWORD
 
-fake = Faker()
+fake = Faker("hu_HU")
+VESZPREM_ADDRESSES = [
+    "Egyetem utca 1., 8200 Veszprém",
+    "Óváros tér 9., 8200 Veszprém",
+    "Kossuth Lajos utca 21., 8200 Veszprém",
+    "Wartha Vince utca 1., 8200 Veszprém",
+    "Budapest út 47., 8200 Veszprém",
+    "Cholnoky Jenő utca 22., 8200 Veszprém",
+    "Haszkovó utca 18., 8200 Veszprém",
+    "Jutasi út 59., 8200 Veszprém",
+    "Március 15. utca 5., 8200 Veszprém",
+    "Munkácsy Mihály utca 3., 8200 Veszprém",
+    "Petőfi Sándor utca 8., 8500 Pápa",
+    "Fő utca 12., 8500 Pápa",
+    "Jókai Mór utca 5., 8500 Pápa",
+    "Kossuth Lajos utca 27., 8100 Várpalota",
+    "Szent István út 15., 8100 Várpalota",
+    "Szabadság tér 1., 8220 Balatonalmádi",
+    "Baross Gábor út 44., 8220 Balatonalmádi",
+    "Petőfi Sándor utca 11., 8230 Balatonfüred",
+    "Zákonyi Ferenc utca 2., 8230 Balatonfüred",
+    "Kossuth Lajos utca 14., 8420 Zirc",
+]
+
+SENDER_ADDRESSES = [
+    "Egyetem utca 1., 8200 Veszprém",
+    "Óváros tér 9., 8200 Veszprém",
+    "Kossuth Lajos utca 21., 8200 Veszprém",
+    "Wartha Vince utca 1., 8200 Veszprém",
+    "Budapest út 47., 8200 Veszprém",
+    "Cholnoky Jenő utca 22., 8200 Veszprém",
+    "Haszkovó utca 18., 8200 Veszprém",
+    "Jutasi út 59., 8200 Veszprém",
+    "Március 15. utca 5., 8200 Veszprém",
+    "Munkácsy Mihály utca 3., 8200 Veszprém",
+]
+
+RECIPIENT_ADDRESSES = [
+    "Petőfi Sándor utca 8., 8500 Pápa",
+    "Fő utca 12., 8500 Pápa",
+    "Jókai Mór utca 5., 8500 Pápa",
+    "Kossuth Lajos utca 27., 8100 Várpalota",
+    "Szent István út 15., 8100 Várpalota",
+    "Szabadság tér 1., 8220 Balatonalmádi",
+    "Baross Gábor út 44., 8220 Balatonalmádi",
+    "Petőfi Sándor utca 11., 8230 Balatonfüred",
+    "Zákonyi Ferenc utca 2., 8230 Balatonfüred",
+    "Kossuth Lajos utca 14., 8420 Zirc",
+]
+
+
+def get_address_with_city():
+    address = get_random_address()
+    address_parts = address.split(" ")
+    city = (
+        address_parts[len(address.split(" ")) - 1]
+        .strip()
+        .replace("é", "")
+        .replace("á", "")
+        .replace("a", "")
+        .replace("ö", "")
+        .replace("ü", "")
+        .upper()
+    )
+    return city, address
+
+
+def get_random_address(type=None):
+    if type == "sender":
+        return random.choice(SENDER_ADDRESSES)
+    elif type == "recipient":
+        return random.choice(RECIPIENT_ADDRESSES)
+    else:
+        return random.choice(VESZPREM_ADDRESSES)
+
+
+def get_random_status():
+    r = random.random()
+    if r < 0.1:
+        return PackageStatus.RETURN
+    elif r < 0.5:
+        return PackageStatus.DELIVERED
+    else:
+        return (
+            PackageStatus.PENDING if random.random() > 0.5 else PackageStatus.IN_TRANSIT
+        )
 
 
 def seed_users(num_users=50):
@@ -39,24 +124,29 @@ def seed_users(num_users=50):
         db.session.add(test_user)
 
     for _ in range(num_users):
+        username = f"{fake.user_name()}_{random.randint(1000, 9999)}"
+        email = (
+            f"{username}@{random.choice(['gmail', 'yahoo', 'hotmail', 'outlook'])}.com"
+        )
         user = User(
-            username=fake.user_name(), email=fake.email(), role=random.choice(roles)
+            username=username,
+            email=email,
+            role=random.choice(roles),
         )
         user.set_password(MASTER_PASSWORD)
         db.session.add(user)
     db.session.commit()
 
 
-def seed_packages(num_packages=100):
-    statuses = PackageStatus.list()
+def seed_packages(num_packages=500):
     for tracking_number in range(num_packages):
         package = Package(
-            tracking_number=f"bn{tracking_number}",
-            status=random.choice(statuses),
+            tracking_number=f"BN{fake.unique.random_int(min=1000, max=99999)}",
+            status=get_random_status(),
             weight=round(random.uniform(0.1, 20.0), 2),
             dimensions=f"{random.randint(1, 100)}x{random.randint(1, 100)}x{random.randint(1, 100)}",
-            sender_address=fake.address(),
-            recipient_address=fake.address(),
+            sender_address=get_random_address("sender"),
+            recipient_address=get_random_address("recipient"),
             delivery_deadline=fake.future_date(end_date="+30d"),
             created_at=fake.date_time_this_year(),
             updated_at=fake.date_time_this_year(),
@@ -67,13 +157,21 @@ def seed_packages(num_packages=100):
 
 def seed_couriers(num_couriers=20):
     statuses = ["available", "on_delivery", "off_duty"]
+    city2number = {}
+
     for _ in range(num_couriers):
+        city, address = get_address_with_city()
+        if city not in city2number:
+            city2number[city] = 1
+        else:
+            city2number[city] += 1
+
         courier = Courier(
             name=fake.name(),
             email=fake.email(),
             phone=fake.phone_number(),
             status=random.choice(statuses),
-            current_location=fake.city(),
+            current_location=city,
             working_hours=f"{random.randint(6, 10)}:00 - {random.randint(14, 20)}:00",
             capacity=round(random.uniform(50, 200), 2),
             created_at=fake.date_time_this_year(),
@@ -84,12 +182,41 @@ def seed_couriers(num_couriers=20):
 
 
 def seed_warehouses(num_warehouses=10):
-    for _ in range(num_warehouses):
+    warehouse_addresses = [
+        "Házgyári út 1., 8200 Veszprém",
+        "Pápai út 34., 8200 Veszprém",
+        "Ipar utca 2., 8100 Várpalota",
+        "Gyártelep utca 1., 8500 Pápa",
+        "Fűzfői út 15., 8220 Balatonalmádi",
+        "Lóczy Lajos utca 30., 8230 Balatonfüred",
+        "Ipari Park, 8420 Zirc",
+    ]
+    city2number = {}
+
+    for address in warehouse_addresses[:num_warehouses]:
+        address_parts = address.split(" ")
+        city = (
+            address_parts[len(address_parts) - 1]
+            .strip()
+            .replace("é", "")
+            .replace("á", "")
+            .replace("a", "")
+            .replace("ö", "")
+            .replace("ü", "")
+            .upper()
+        )
+        if city not in city2number:
+            city2number[city] = 1
+        else:
+            city2number[city] += 1
+        city_id = f"{city}-{city2number[city]}"
+
+        capacity = random.randint(10, 50)
         warehouse = Warehouse(
-            name=fake.company(),
-            address=fake.address(),
-            capacity=random.randint(1000, 10000),
-            current_load=random.randint(0, 1000),
+            name=f"BNR-{city_id}",
+            address=address,
+            capacity=capacity,
+            current_load=0,  # Start with 0, will be updated in seed_assignments
             created_at=fake.date_time_this_year(),
             updated_at=fake.date_time_this_year(),
         )
@@ -97,13 +224,22 @@ def seed_warehouses(num_warehouses=10):
     db.session.commit()
 
 
-def seed_parcel_lockers(num_lockers=30):
+def seed_parcel_lockers(num_lockers=10):
+    city2number = {}
+
     for _ in range(num_lockers):
+        city, address = get_address_with_city()
+        if city not in city2number:
+            city2number[city] = 1
+        else:
+            city2number[city] += 1
+
+        total_compartments = random.randint(5, 20)
         locker = ParcelLocker(
-            location=fake.city(),
-            address=fake.address(),
-            total_compartments=random.randint(20, 100),
-            available_compartments=random.randint(0, 20),
+            location=f"{city}-{city2number[city]}",
+            address=address,
+            total_compartments=total_compartments,
+            available_compartments=total_compartments,
             created_at=fake.date_time_this_year(),
             updated_at=fake.date_time_this_year(),
         )
@@ -113,28 +249,146 @@ def seed_parcel_lockers(num_lockers=30):
 
 def seed_assignments(num_assignments=150):
     packages = Package.query.all()
+    if not packages:
+        print("No packages to assign!")
+        return
+
     couriers = Courier.query.all()
     warehouses = Warehouse.query.all()
     lockers = ParcelLocker.query.all()
     statuses = ["assigned", "in_progress", "completed"]
 
-    used_warehouse = random.choice(warehouses).id
-    used_parcel_locker = random.choice(lockers).id
-    used_storage = used_warehouse if random.random() > 0.5 else used_parcel_locker
+    # Reset counters
+    for warehouse in warehouses:
+        warehouse.current_load = 0
+    for locker in lockers:
+        locker.available_compartments = locker.total_compartments
 
-    for _ in range(num_assignments):
-        assignment = Assignment(
-            package_id=random.choice(packages).id,
-            courier_id=random.choice(couriers).id,
-            warehouse_id=(used_warehouse if used_storage == used_warehouse else None),
-            parcel_locker_id=(
-                used_parcel_locker if used_storage == used_parcel_locker else None
-            ),
-            status=random.choice(statuses),
-            assigned_at=fake.date_time_this_year(),
-            completed_at=fake.date_time_this_year() if random.random() > 0.5 else None,
-        )
-        db.session.add(assignment)
+    # First ensure minimum packages for warehouses (10 each)
+    for warehouse in warehouses:
+        packages_needed = 10 + random.randint(0, warehouse.capacity - 1)
+        packages_to_assign = [packages.pop() for _ in range(packages_needed)]
+
+        for package in packages_to_assign:
+            assignment = Assignment(
+                package_id=package.id,
+                courier_id=random.choice(couriers).id,
+                warehouse_id=warehouse.id,
+                parcel_locker_id=None,
+                status=random.choice(statuses),
+                assigned_at=fake.date_time_this_year(),
+                completed_at=(
+                    fake.date_time_this_year() if random.random() > 0.5 else None
+                ),
+            )
+            db.session.add(assignment)
+            warehouse.current_load += 1
+
+    # Then ensure minimum packages for parcel lockers (10 each)
+    for locker in lockers:
+        packages_needed = min(10, locker.total_compartments)
+        packages_to_assign = [packages.pop() for _ in range(packages_needed)]
+
+        for package in packages_to_assign:
+            assignment = Assignment(
+                package_id=package.id,
+                courier_id=random.choice(couriers).id,
+                warehouse_id=None,
+                parcel_locker_id=locker.id,
+                status=random.choice(statuses),
+                assigned_at=fake.date_time_this_year(),
+                completed_at=(
+                    fake.date_time_this_year() if random.random() > 0.5 else None
+                ),
+            )
+            db.session.add(assignment)
+            locker.available_compartments -= 1
+
+    # Distribute remaining packages randomly between warehouses and lockers
+    while packages:
+        package = packages[0]
+        if random.random() > 0.5:
+            # Try to assign to a warehouse
+            available_warehouses = [
+                w for w in warehouses if w.current_load < w.capacity
+            ]
+            if available_warehouses:
+                warehouse = random.choice(available_warehouses)
+                assignment = Assignment(
+                    package_id=package.id,
+                    courier_id=random.choice(couriers).id,
+                    warehouse_id=warehouse.id,
+                    parcel_locker_id=None,
+                    status=random.choice(statuses),
+                    assigned_at=fake.date_time_this_year(),
+                    completed_at=(
+                        fake.date_time_this_year() if random.random() > 0.5 else None
+                    ),
+                )
+                db.session.add(assignment)
+                warehouse.current_load += 1
+                packages.remove(package)
+                continue
+
+        # Try to assign to a parcel locker
+        available_lockers = [l for l in lockers if l.available_compartments > 0]
+        if available_lockers:
+            locker = random.choice(available_lockers)
+            assignment = Assignment(
+                package_id=package.id,
+                courier_id=random.choice(couriers).id,
+                warehouse_id=None,
+                parcel_locker_id=locker.id,
+                status=random.choice(statuses),
+                assigned_at=fake.date_time_this_year(),
+                completed_at=(
+                    fake.date_time_this_year() if random.random() > 0.5 else None
+                ),
+            )
+            db.session.add(assignment)
+            locker.available_compartments -= 1
+            packages.remove(package)
+        else:
+            # If no space left in lockers, try warehouses again
+            available_warehouses = [
+                w for w in warehouses if w.current_load < w.capacity
+            ]
+            if available_warehouses:
+                warehouse = random.choice(available_warehouses)
+                assignment = Assignment(
+                    package_id=package.id,
+                    courier_id=random.choice(couriers).id,
+                    warehouse_id=warehouse.id,
+                    parcel_locker_id=None,
+                    status=random.choice(statuses),
+                    assigned_at=fake.date_time_this_year(),
+                    completed_at=(
+                        fake.date_time_this_year() if random.random() > 0.5 else None
+                    ),
+                )
+                db.session.add(assignment)
+                warehouse.current_load += 1
+                packages.remove(package)
+            else:
+                # No space left anywhere
+                print(
+                    f"Warning: Could not assign package {package.id} - no space available"
+                )
+                break
+
+    # Verify and update counters based on actual assignments
+    for warehouse in warehouses:
+        actual_count = Assignment.query.filter_by(
+            warehouse_id=warehouse.id, completed_at=None
+        ).count()
+        warehouse.current_load = actual_count
+
+    for locker in lockers:
+        assigned_count = Assignment.query.filter_by(
+            parcel_locker_id=locker.id, completed_at=None
+        ).count()
+        locker.available_compartments = locker.total_compartments - assigned_count
+
     db.session.commit()
 
 
@@ -152,12 +406,17 @@ def clean_database():
 
 def seed_database():
     clean_database()
-    print("Seeding database...")
+    print("Seeding users...")
     seed_users()
+    print("Seeding packages...")
     seed_packages()
+    print("Seeding couriers...")
     seed_couriers()
+    print("Seeding warehouses...")
     seed_warehouses()
+    print("Seeding parcel lockers...")
     seed_parcel_lockers()
+    print("Seeding assignments...")
     seed_assignments()
     print("Database seeded successfully!")
 
