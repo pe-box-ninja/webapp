@@ -8,6 +8,10 @@ body {
     background-color: #f4f4f4;
 }
 
+a, input, button, select, textarea, .btn, .form-control, .nav-link {
+    transition: all 0.2s ease-in-out;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -20,7 +24,15 @@ body {
 
 .navbar-brand {
     font-weight: bold;
-    color: #0056b3 !important;
+    color: rgb(52, 50, 50) !important;
+    transition: all 0.3s ease-in-out;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand:hover {
+    color: rgb(62, 62, 62) !important;
+    transform: scale(1.15);
+
 }
 
 main {
