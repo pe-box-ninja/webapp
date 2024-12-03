@@ -4,18 +4,18 @@
 {% block content %}
 <div class="container mt-4">
     {% if warehouse %}
-        <h1 class="mb-4">{{ warehouse.name }} raktár csomagjai</h1>
+        <h1 class="mb-4 heading-1">{{ icon('warehouse') }} {{ warehouse.name }} raktár csomagjai</h1>
     {% elif parcel_locker %}
-        <h1 class="mb-4">{{ parcel_locker.location }} csomagautomata csomagjai</h1>
+        <h1 class="mb-4 heading-1">{{ icon('box') }} {{ parcel_locker.location }} csomagautomata csomagjai</h1>
     {% else %}
-        <h1 class="mb-4">Csomagok</h1>
+        <h1 class="mb-4 heading-1">{{ icon('boxes') }} Csomagok</h1>
     {% endif %}
 
     <div class="row mb-4">
         <div class="col-md-4">
-            <form action="{{ url_for('package.list', warehouse_id=warehouse_id) }}" method="get" class="form-inline">
-                <div class="form-group mr-2">
-                    <select name="status" class="form-control p-2">
+            <form action="{{ url_for('package.list', warehouse_id=warehouse_id) }}" method="get">
+                <div class="input-group">
+                    <select name="status" class="form-control p-1">
                         <option value="all" {% if current_filter == 'all' %}selected{% endif %}>Összes státusz</option>
                         {% for status in PackageStatus.list() %}
                         {% if not warehouse_id or status != "kézbesítve" %}
@@ -25,69 +25,80 @@
                         {% endif %}
                         {% endfor %}
                     </select>
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Szűrés</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Szűrés</button>
             </form>
         </div>
         <div class="col-md-4">
-            <form action="{{ url_for('package.list', warehouse_id=warehouse_id) }}" method="get" class="form-inline">
-                <div class="form-group mr-2">
+            <form action="{{ url_for('package.list', warehouse_id=warehouse_id) }}" method="get">
+                <div class="input-group">
                     <input type="text" name="search" class="form-control" placeholder="Keresés..." value="{{ search_query }}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Keresés</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Keresés</button>
             </form>
         </div>
         {% if not parcel_locker_id and not warehouse_id and current_user.is_admin() %}
         <div class="col-md-4">
-            <a href="{{ url_for('package.create') }}" class="btn btn-success">Csomagküldés</a>
+            <a href="{{ url_for('package.create') }}" class="btn btn-success text-white">
+                {{ icon('plus') }} Csomagküldés
+            </a>
         </div>
         {% endif %}
     </div>
 
-    <div class="card mb-4">
+    <div class="card shadow-sm mb-4">
         <div class="card-header">
-            Státusz magyarázat
+            <h5 class="mb-0">{{ icon('info-circle') }} Státusz magyarázat</h5>
         </div>
         <div class="card-body">
-            <ul class="list-unstyled">
-                <li><span class="badge badge-warning">Függőben</span> - A csomag feldolgozásra vár</li>
-                <li><span class="badge badge-primary">Szállítás alatt</span> - A csomag úton van a címzetthez</li>
-                <li><span class="badge badge-success">Kézbesítve</span> - A csomagot sikeresen kézbesítették</li>
-                <li><span class="badge badge-danger">Visszaküldve</span> - A csomagot nem sikerült kézbesíteni, visszaküldésre került</li>
+            <ul class="list-unstyled mb-0">
+                <li class="mb-2"><span class="badge badge-warning px-2 py-1">Függőben</span> - A csomag feldolgozásra vár</li>
+                <li class="mb-2"><span class="badge badge-primary px-2 py-1">Szállítás alatt</span> - A csomag úton van a címzetthez</li>
+                <li class="mb-2"><span class="badge badge-success px-2 py-1">Kézbesítve</span> - A csomagot sikeresen kézbesítették</li>
+                <li class="mb-0"><span class="badge badge-danger px-2 py-1">Visszaküldve</span> - A csomagot nem sikerült kézbesíteni</li>
             </ul>
         </div>
     </div>
 
-    <!-- Existing table code -->
     <div class="card shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th scope="col" class="small">Azonosító</th>
-                            <th scope="col" class="small">Nyomkövetési szám</th>
-                            <th scope="col" class="small">Státusz</th>
-                            <th scope="col" class="small">Súly</th>
+                            <th scope="col" class="small">{{ icon('hashtag') }} Azonosító</th>
+                            <th scope="col" class="small">{{ icon('barcode') }} Nyomkövetési szám</th>
+                            <th scope="col" class="small">{{ icon('box') }} Státusz</th>
+                            <th scope="col" class="small">{{ icon('weight-scale') }} Súly</th>
                             <th scope="col" class="small">Műveletek</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for package in packages %}
                         <tr>
-                            <td>{{ package.id }}</td>
-                            <td>{{ package.tracking_number }}</td>
+                            <td class="small">{{ package.id }}</td>
+                            <td class="small">{{ package.tracking_number }}</td>
                             <td>
-                                <span class="badge px-2 py-2 badge-{{ {'függőben': 'warning', 'szállítás alatt': 'primary', 'kézbesítve': 'success', 'visszaküldve': 'danger'}[package.status] }}">
+                                <span class="badge px-2 py-1 badge-{{ {'függőben': 'warning', 'szállítás alatt': 'primary', 'kézbesítve': 'success', 'visszaküldve': 'danger'}[package.status] }}">
                                     {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[package.status] }}
                                 </span>
                             </td>
-                            <td>{{ package.weight }} kg</td>
+                            <td class="small">{{ package.weight }} kg</td>
                             <td>
-                                <a href="{{ url_for('package.view', id=package.id) }}" class="btn btn-sm btn-outline-primary">Megtekintés</a>
-                                {% if current_user.is_admin() %}
-                                <a href="{{ url_for('package.edit', id=package.id) }}" class="btn btn-sm btn-outline-secondary">Szerkesztés</a>
-                                {% endif %}
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('package.view', id=package.id) }}" class="btn btn-sm btn-primary">
+                                        
+                                        Megtekintés</a>
+                                    {% if current_user.is_admin() %}
+                                    <a href="{{ url_for('package.edit', id=package.id) }}" class="btn btn-sm btn-secondary">
+                                        
+                                        Szerkesztés</a>
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}

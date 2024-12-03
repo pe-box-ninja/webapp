@@ -1,0 +1,76 @@
+{% extends "base.html" %} {% from "design-system.html" import icon %} {% block
+content %}
+<div class="container mt-4">
+  <h1 class="mb-4 heading-1">{{ icon('warehouse') }} Raktárak</h1>
+
+  {% if current_user.is_admin() %}
+  <div class="col-md-4 mb-4">
+    <div class="form-inline">
+      <a
+        href="{{ url_for('warehouse.create') }}"
+        class="btn btn-success text-white"
+      >
+        <i class="fa-solid fa-plus mr-1"></i>
+        Új raktár hozzáadása
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th scope="col" class="small">
+                <i class="fa-solid fa-box mr-1"></i>
+                Név
+              </th>
+              <th scope="col" class="small">
+                <i class="fa-solid fa-location-dot mr-1"></i>
+                Cím
+              </th>
+              <th scope="col" class="small">
+                <i class="fa-solid fa-box mr-1"></i>
+                Kapacitás
+              </th>
+              <th scope="col" class="small">
+                <i class="fa-solid fa-weight-scale mr-1"></i>
+                Terhelés
+              </th>
+              <th scope="col" class="small">Műveletek</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for warehouse in warehouses %}
+            <tr>
+              <td class="small">{{ warehouse.name }}</td>
+              <td class="small">{{ warehouse.address }}</td>
+              <td class="small">{{ warehouse.capacity }}</td>
+              <td class="small">{{ warehouse.current_load }}</td>
+              <td>
+                <div class="btn-group" role="group">
+                  <a
+                    href="{{ url_for('warehouse.list_packages', id=warehouse.id) }}"
+                    class="btn btn-sm btn-primary"
+                    >Csomagok megtekintése</a
+                  >
+                  {% if current_user.is_admin() %}
+                  <a
+                    href="{{ url_for('warehouse.edit', id=warehouse.id) }}"
+                    class="btn btn-sm btn-secondary"
+                    >Szerkesztés</a
+                  >
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

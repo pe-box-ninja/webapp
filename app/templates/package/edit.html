@@ -1,75 +1,83 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container mt-5">
-    <div class="card shadow">
-        <div class="card-header text-white">
-            <i class="fas fa-edit mr-2"></i>
-            Csomag módosítása
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                {{ form.hidden_tag() }}
-                <div class="form-group row">
-                    <label for="{{ form.tracking_number.id }}" class="col-sm-3 col-form-label">
-                        <i class="fas fa-barcode mr-2"></i>
-                        {{ form.tracking_number.label.text }}
-                    </label>
-                    <div class="col-sm-9">
-                        {{ form.tracking_number(class="form-control") }}
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="{{ form.status.id }}" class="col-sm-3 col-form-label">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        {{ form.status.label.text }}
-                    </label>
-                    <div class="col-sm-9">
-                        {{ form.status(class="form-control py-2") }}
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="{{ form.weight.id }}" class="col-sm-3 col-form-label">
-                        <i class="fas fa-weight mr-2"></i>
-                        {{ form.weight.label.text }}
-                    </label>
-                    <div class="col-sm-9">
-                        <div class="input-group">
-                            {{ form.weight(class="form-control") }}
-                            <div class="input-group-append">
-                                <span class="input-group-text">kg</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="{{ form.sender_address.id }}" class="col-sm-3 col-form-label">
-                        <i class="fas fa-home mr-2"></i>
-                        {{ form.sender_address.label.text }}
-                    </label>
-                    <div class="col-sm-9">
-                        {{ form.sender_address(class="form-control") }}
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="{{ form.recipient_address.id }}" class="col-sm-3 col-form-label">
-                        <i class="fas fa-map-marker-alt mr-2"></i>
-                        {{ form.recipient_address.label.text }}
-                    </label>
-                    <div class="col-sm-9">
-                        {{ form.recipient_address(class="form-control") }}
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-9 offset-sm-3">
-                        {{ form.submit(class="btn btn-primary mr-2") }}
-                        <a href="{{ url_for('package.list') }}" class="btn btn-secondary">
-                            <i class="fas fa-times mr-2"></i>
-                            Mégsem
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
+  <h1 class="mb-4 heading-1">Csomag módosítása</h1>
+  <div class="card shadow">
+    <div class="card-header text-white">
+      <i class="fas fa-edit mr-2"></i>
     </div>
+    <div class="card-body">
+      <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group row">
+          <label
+            for="{{ form.tracking_number.id }}"
+            class="col-sm-3 col-form-label"
+          >
+            <i class="fas fa-barcode mr-2"></i>
+            {{ form.tracking_number.label.text }}
+          </label>
+          <div class="col-sm-9">
+            {{ form.tracking_number(class="form-control") }}
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="{{ form.status.id }}" class="col-sm-3 col-form-label">
+            <i class="fas fa-info-circle mr-2"></i>
+            {{ form.status.label.text }}
+          </label>
+          <div class="col-sm-9">
+            {{ form.status(class="form-control py-2") }}
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="{{ form.weight.id }}" class="col-sm-3 col-form-label">
+            <i class="fas fa-weight mr-2"></i>
+            {{ form.weight.label.text }}
+          </label>
+          <div class="col-sm-9">
+            <div class="input-group">
+              {{ form.weight(class="form-control") }}
+              <div class="input-group-append">
+                <span class="input-group-text">kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label
+            for="{{ form.sender_address.id }}"
+            class="col-sm-3 col-form-label"
+          >
+            <i class="fas fa-home mr-2"></i>
+            {{ form.sender_address.label.text }}
+          </label>
+          <div class="col-sm-9">
+            {{ form.sender_address(class="form-control") }}
+          </div>
+        </div>
+        <div class="form-group row">
+          <label
+            for="{{ form.recipient_address.id }}"
+            class="col-sm-3 col-form-label"
+          >
+            <i class="fas fa-map-marker-alt mr-2"></i>
+            {{ form.recipient_address.label.text }}
+          </label>
+          <div class="col-sm-9">
+            {{ form.recipient_address(class="form-control") }}
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-9 offset-sm-3">
+            {{ form.submit(class="btn btn-primary mr-2") }}
+            <a href="{{ url_for('package.list') }}" class="btn btn-secondary">
+              <i class="fas fa-times mr-2"></i>
+              Mégsem
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}
