@@ -3,18 +3,24 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="mb-4">Csomagok</h1>
+    {% if warehouse_id and warehouse %}
+        <h1 class="mb-4">{{ warehouse.name }} raktár csomagjai</h1>
+    {% else %}
+        <h1 class="mb-4">Csomagok</h1>
+    {% endif %}
 
     <div class="row mb-4">
         <div class="col-md-4">
-            <form action="{{ url_for('package.list') }}" method="get" class="form-inline">
+            <form action="{{ url_for('package.list', warehouse_id=warehouse_id) }}" method="get" class="form-inline">
                 <div class="form-group mr-2">
                     <select name="status" class="form-control p-2">
                         <option value="all" {% if current_filter == 'all' %}selected{% endif %}>Összes státusz</option>
                         {% for status in PackageStatus.list() %}
+                        {% if not warehouse_id or status != "kézbesítve" %}
                             <option value="{{ status }}" {% if current_filter == status %}selected{% endif %}>
                                 {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[status] }}
                             </option>
+                        {% endif %}
                         {% endfor %}
                     </select>
                 </div>
@@ -22,20 +28,18 @@
             </form>
         </div>
         <div class="col-md-4">
-            <form action="{{ url_for('package.list') }}" method="get" class="form-inline">
+            <form action="{{ url_for('package.list', warehouse_id=warehouse_id) }}" method="get" class="form-inline">
                 <div class="form-group mr-2">
                     <input type="text" name="search" class="form-control" placeholder="Keresés..." value="{{ search_query }}">
                 </div>
                 <button type="submit" class="btn btn-primary">Keresés</button>
             </form>
         </div>
+        {% if not warehouse_id and current_user.is_admin() %}
         <div class="col-md-4">
-            <div class="form-inline">
-                {% if current_user.is_admin() %}
-                <a href="{{ url_for('package.create') }}" class="btn btn-success">Csomagküldés</a>
-                {% endif %}
-            </div>
+            <a href="{{ url_for('package.create') }}" class="btn btn-success">Csomagküldés</a>
         </div>
+        {% endif %}
     </div>
 
     <div class="card mb-4">
