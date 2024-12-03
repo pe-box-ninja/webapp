@@ -1,22 +1,90 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% from "design-system.html" import icon %}
+
+{% block content %}
 <div class="container mt-4">
-  <h1>Raktár létrehozás</h1>
-  <form method="POST" action="{{ url_for('warehouse.create') }}">
-    {{ form.hidden_tag() }}
-    <div class="form-group">
-      {{ form.name.label }} {{ form.name(class="form-control") }}
+  <h1 class="mb-4">Raktár létrehozása</h1>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0 text-white">{{ icon('warehouse') }} Raktár Adatai</h5>
     </div>
-    <div class="form-group">
-      {{ form.address.label }} {{ form.address(class="form-control p-1") }}
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('warehouse.create') }}">
+        {{ form.hidden_tag() }}
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('building') }} {{ form.name.label.text }}</h6>
+            {{ form.name(class="form-control", placeholder="Írja be a raktár nevét") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('map-marker-alt') }} {{ form.address.label.text }}</h6>
+            {{ form.address(class="form-control", placeholder="Írja be a raktár címét") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('boxes-stacked') }} {{ form.capacity.label.text }}</h6>
+            <div class="input-group">
+              {{ form.capacity(class="form-control", placeholder="Adja meg a raktár kapacitását") }}
+              <div class="input-group-append">
+                <span class="input-group-text">csomag</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('box') }} {{ form.current_load.label.text }}</h6>
+            <div class="input-group">
+              {{ form.current_load(class="form-control", placeholder="Adja meg a jelenlegi terhelést") }}
+              <div class="input-group-append">
+                <span class="input-group-text">csomag</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      {{ form.capacity.label }} {{ form.capacity(class="form-control") }}
+    
+    <div class="text-center mt-4">
+      <a href="{{ url_for('warehouse.list') }}" class="btn btn-secondary me-2">
+        {{ icon('times') }} Mégsem
+      </a>
+      {{ form.submit(class="btn btn-primary") }}
     </div>
-    <div class="form-group">
-      {{ form.current_load.label }} {{ form.current_load(class="form-control") }}
-      <br>
-    {{ form.submit(class="btn btn-primary") }}
   </form>
-  
 </div>
+
+<style>
+  .card {
+    border: none;
+  }
+  
+  .card-header h5 {
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .form-control {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+  }
+  
+  .form-control:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+  }
+  
+  h6 {
+    color: #666;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+  
+  .btn {
+    padding: 0.5rem 1.5rem;
+  }
+  
+  .me-2 {
+    margin-right: 0.5rem;
+  }
+</style>
 {% endblock %}
