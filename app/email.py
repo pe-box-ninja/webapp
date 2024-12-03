@@ -8,7 +8,7 @@ def send_welcome_email(user):
     subject = "Üdvözöljük a BoxNinja-nál!"
     recipients = [user.email]
     html_body = render_template(
-        "email/welcome.html", user=user, base_url=current_app.config["BASE_URL"]
+        "email/welcome.html", user=user, base_url="http://localhost:3000"
     )
     send_email(subject, recipients, html_body)
 
@@ -22,7 +22,7 @@ def send_login_notification(user, login_date, login_ip, login_device):
         login_date=login_date,
         login_ip=login_ip,
         login_device=login_device,
-        base_url=current_app.config["BASE_URL"],
+        base_url="http://localhost:3000",
     )
     send_email(subject, recipients, html_body)
 
@@ -34,7 +34,7 @@ def send_delivery_notification(user, tracking_number):
         "email/delivery_notification.html",
         user=user,
         tracking_number=tracking_number,
-        base_url=current_app.config["BASE_URL"],
+        base_url="http://localhost:3000",
     )
     send_email(subject, recipients, html_body)
 
