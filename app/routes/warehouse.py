@@ -24,10 +24,10 @@ def list():
     )
 
 
-@bp.route("warehouse/show_packages_inside_warehouse/<id>")
+@bp.route("warehouse/list_packages/<id>")
 @login_required
 @warehouse_required
-def show_packages_inside_warehouse(id):
+def list_packages(id: str):
     return redirect(url_for("package.list", warehouse_id=id))
 
 
