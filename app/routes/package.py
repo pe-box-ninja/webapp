@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required
-from app.models import Package, PackageStatus
+from app.models import Package, PackageStatus, Warehouse, Assignment
 from app.decorators import warehouse_required
 from app import db
 from app.forms import EditPackageForm, CreatePackageForm
@@ -38,6 +38,7 @@ def create():
 def list():
     status_filter = request.args.get("status", "all")
     search_query = request.args.get("search", "")
+    warehouse_id = request.args.get("warehouse_id")
 
     query = Package.query
 
@@ -53,11 +54,15 @@ def list():
             )
         )
 
-    def filter_for_warehouse(package: Package):
-        # TODO
-        pass
+    warehouse = None
+    if warehouse_id:
+        warehouse = Warehouse.query.get_or_404(warehouse_id)
+        query = query.join(Assignment).filter(
+            Assignment.warehouse_id == warehouse_id, Package.status != "kézbesítve"
+        )
 
     packages = query.all()
+
     return render_template(
         "package/list.html",
         title="Csomagok",
@@ -65,6 +70,8 @@ def list():
         current_filter=status_filter,
         search_query=search_query,
         PackageStatus=PackageStatus,
+        warehouse_id=warehouse_id,
+        warehouse=warehouse,
     )
 
 
