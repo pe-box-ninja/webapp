@@ -18,6 +18,10 @@ from wtforms.validators import (
     Length,
 )
 from app.models import User, PackageStatus, CourierStatus
+from faker import Faker
+
+fake = Faker()
+
 
 class LoginForm(FlaskForm):
     username = StringField("Felhasználónév", validators=[DataRequired()])
@@ -84,7 +88,11 @@ class EditPackageForm(FlaskForm):
 
 
 class CreatePackageForm(FlaskForm):
-    tracking_number = StringField("Nyomkövetési szám", validators=[DataRequired()])
+    tracking_number = StringField(
+        "Nyomkövetési szám",
+        validators=[DataRequired()],
+        default=f"bn{fake.unique.random_int(min=100000, max=999999)}",
+    )
     status = SelectField(
         "Státusz",
         choices=[(status, status) for status in PackageStatus.list()],
@@ -101,32 +109,58 @@ class CreatePackageForm(FlaskForm):
 class CreateWarehouseForm(FlaskForm):
     name = StringField("Név", validators=[DataRequired()])
     address = StringField("Cím", validators=[DataRequired()])
-    capacity = IntegerField("Méret (mennyi csomag fér el összesen a raktárban)", validators=[DataRequired(), NumberRange(min=1)])
-    current_load = IntegerField("Jelenlegi terhelés (mennyi csomag van a raktárban)", validators=[DataRequired(), NumberRange(min=1)])
+    capacity = IntegerField(
+        "Méret (mennyi csomag fér el összesen a raktárban)",
+        validators=[DataRequired(), NumberRange(min=1)],
+    )
+    current_load = IntegerField(
+        "Jelenlegi terhelés (mennyi csomag van a raktárban)",
+        validators=[DataRequired(), NumberRange(min=1)],
+    )
     submit = SubmitField("Raktár létrehozása")
 
 
 class EditWarehouseForm(FlaskForm):
     name = StringField("Név", validators=[DataRequired()])
     address = StringField("Cím", validators=[DataRequired()])
-    capacity = IntegerField("Méret (mennyi csomag fér el összesen a raktárban)", validators=[DataRequired(), NumberRange(min=1)])
-    current_load = IntegerField("Jelenlegi terhelés (mennyi csomag van a raktárban)", validators=[DataRequired(), NumberRange(min=1)])
+    capacity = IntegerField(
+        "Méret (mennyi csomag fér el összesen a raktárban)",
+        validators=[DataRequired(), NumberRange(min=1)],
+    )
+    current_load = IntegerField(
+        "Jelenlegi terhelés (mennyi csomag van a raktárban)",
+        validators=[DataRequired(), NumberRange(min=1)],
+    )
     submit = SubmitField("Raktár módosítása")
+
 
 class CreateParcelLockerForm(FlaskForm):
     location = StringField("Név", validators=[DataRequired()])
     address = StringField("Cím", validators=[DataRequired()])
-    total_compartments = IntegerField("Méret (mennyi csomag fér el összesen a csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
-    available_compartments = IntegerField("Elérhető helyek (mennyi csomag fér még el csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
+    total_compartments = IntegerField(
+        "Méret (mennyi csomag fér el összesen a csomagautomatában)",
+        validators=[DataRequired(), NumberRange(min=1)],
+    )
+    available_compartments = IntegerField(
+        "Elérhető helyek (mennyi csomag fér még el csomagautomatában)",
+        validators=[DataRequired(), NumberRange(min=1)],
+    )
     submit = SubmitField("Csomagautomata létrehozása")
 
 
 class EditParcelLockerForm(FlaskForm):
     location = StringField("Név", validators=[DataRequired()])
     address = StringField("Cím", validators=[DataRequired()])
-    total_compartments = IntegerField("Méret (mennyi csomag fér el összesen a csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
-    available_compartments = IntegerField("Elérhető helyek (mennyi csomag fér még el csomagautomatában)", validators=[DataRequired(), NumberRange(min=1)])
+    total_compartments = IntegerField(
+        "Méret (mennyi csomag fér el összesen a csomagautomatában)",
+        validators=[DataRequired(), NumberRange(min=1)],
+    )
+    available_compartments = IntegerField(
+        "Elérhető helyek (mennyi csomag fér még el csomagautomatában)",
+        validators=[DataRequired(), NumberRange(min=1)],
+    )
     submit = SubmitField("Csomagautomata módosítása")
+
 
 class CreateCourierForm(FlaskForm):
     id = IntegerField("Id", validators=[DataRequired()])
@@ -145,9 +179,14 @@ class CreateCourierForm(FlaskForm):
     updated_at = DateField("Frissítve", validators=[DataRequired()])
     submit = SubmitField("Futár létrehozása")
 
+
 class EditCourierForm(FlaskForm):
     id = IntegerField("Azonosító", render_kw={"readonly": True})
-    status = SelectField("Státusz", choices=[("active", "Aktív"), ("inactive", "Inaktív")], validators=[DataRequired()])
+    status = SelectField(
+        "Státusz",
+        choices=[("active", "Aktív"), ("inactive", "Inaktív")],
+        validators=[DataRequired()],
+    )
     name = StringField("Név", validators=[DataRequired(), Length(max=100)])
     email = StringField("Email", validators=[DataRequired(), Email()])
     phone = StringField("Telefon", validators=[DataRequired(), Length(max=15)])
