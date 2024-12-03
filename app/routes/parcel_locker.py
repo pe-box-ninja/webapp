@@ -15,7 +15,7 @@ bp = Blueprint("parcel_locker", __name__)
 def list():
     parcel_lockers = ParcelLocker.query.all()
     return render_template(
-        "parcel_locker/parcel_lockers_list.html",
+        "parcel_locker/list.html",
         title="Csomagautomaták",
         parcel_lockers=parcel_lockers,
     )

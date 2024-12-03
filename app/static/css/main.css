@@ -9,7 +9,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 15px;
 }
@@ -82,6 +82,13 @@ footer {
 
 select.form-control {
     padding: 15px;
+}
+
+.heading-1, .heading-2, .heading-3, .heading-4, .heading-5, .heading-6 {
+    color: var(--dark-color);
+    font-weight: bold;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {

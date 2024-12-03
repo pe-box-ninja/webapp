@@ -95,12 +95,6 @@ def view(id):
     )
 
 
-@bp.route("/send")
-@login_required
-def send():
-    return render_template("package/send.html", title="Csomagküldés")
-
-
 @bp.route("/track", methods=["GET", "POST"])
 def track():
     if request.method == "POST":
