@@ -1,22 +1,90 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% from "design-system.html" import icon %}
+
+{% block content %}
 <div class="container mt-4">
-  <h1>Csomagautomata létrehozás</h1>
-  <form method="POST" action="{{ url_for('parcel_locker.create') }}">
-    {{ form.hidden_tag() }}
-    <div class="form-group">
-      {{ form.location.label }} {{ form.location(class="form-control") }}
+  <h1 class="mb-4">Csomagautomata létrehozás</h1>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="mb-0 text-white">{{ icon('box') }} Csomagautomata Adatai</h5>
     </div>
-    <div class="form-group">
-      {{ form.address.label }} {{ form.address(class="form-control p-1") }}
+    <div class="card-body">
+      <form method="POST" action="{{ url_for('parcel_locker.create') }}">
+        {{ form.hidden_tag() }}
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('map-marker-alt') }} {{ form.location.label.text }}</h6>
+            {{ form.location(class="form-control", placeholder="Írja be a csomagautomata helyét") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('home') }} {{ form.address.label.text }}</h6>
+            {{ form.address(class="form-control", placeholder="Írja be a címet") }}
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('boxes-stacked') }} {{ form.total_compartments.label.text }}</h6>
+            <div class="input-group">
+              {{ form.total_compartments(class="form-control", placeholder="Adja meg a rekeszek számát") }}
+              <div class="input-group-append">
+                <span class="input-group-text">rekesz</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <h6>{{ icon('box') }} {{ form.available_compartments.label.text }}</h6>
+            <div class="input-group">
+              {{ form.available_compartments(class="form-control", placeholder="Adja meg az elérhető rekeszek számát") }}
+              <div class="input-group-append">
+                <span class="input-group-text">rekesz</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="form-group">
-      {{ form.total_compartments.label }} {{ form.total_compartments(class="form-control") }}
+    
+    <div class="text-center mt-4">
+      <a href="{{ url_for('parcel_locker.list') }}" class="btn btn-secondary me-2">
+        {{ icon('times') }} Mégsem
+      </a>
+      {{ form.submit(class="btn btn-primary") }}
     </div>
-    <div class="form-group">
-      {{ form.available_compartments.label }} {{ form.available_compartments(class="form-control") }}
-      <br>
-    {{ form.submit(class="btn btn-primary") }}
   </form>
-  
 </div>
+
+<style>
+.card {
+  border: none;
+}
+
+.card-header h5 {
+  color: #333;
+  font-weight: 500;
+}
+
+.form-control {
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.form-control:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25);
+}
+
+h6 {
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1.5rem;
+}
+
+.me-2 {
+  margin-right: 0.5rem;
+}
+</style>
 {% endblock %}
