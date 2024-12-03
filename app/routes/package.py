@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required
-from app.models import Package, PackageStatus, Warehouse, Assignment
+from app.models import Package, PackageStatus, Warehouse, Assignment, ParcelLocker
 from app.decorators import warehouse_required
 from app import db
 from app.forms import EditPackageForm, CreatePackageForm
@@ -39,6 +39,7 @@ def list():
     status_filter = request.args.get("status", "all")
     search_query = request.args.get("search", "")
     warehouse_id = request.args.get("warehouse_id")
+    parcel_locker_id = request.args.get("parcel_locker_id")
 
     query = Package.query
 
@@ -55,10 +56,18 @@ def list():
         )
 
     warehouse = None
+    parcel_locker = None
+
     if warehouse_id:
         warehouse = Warehouse.query.get_or_404(warehouse_id)
         query = query.join(Assignment).filter(
             Assignment.warehouse_id == warehouse_id, Package.status != "kézbesítve"
+        )
+    elif parcel_locker_id:
+        parcel_locker = ParcelLocker.query.get_or_404(parcel_locker_id)
+        query = query.join(Assignment).filter(
+            Assignment.parcel_locker_id == parcel_locker_id,
+            Package.status != "kézbesítve",
         )
 
     packages = query.all()
@@ -72,6 +81,8 @@ def list():
         PackageStatus=PackageStatus,
         warehouse_id=warehouse_id,
         warehouse=warehouse,
+        parcel_locker_id=parcel_locker_id,
+        parcel_locker=parcel_locker,
     )
 
 

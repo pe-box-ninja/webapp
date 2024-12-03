@@ -39,7 +39,7 @@
         <!-- <p>{{ parcel_locker.id }}</p>
                 <br> -->
         <a
-          href="{{ url_for('parcel_locker.show_packages_inside_parcel_locker', id=parcel_locker.id) }}"
+          href="{{ url_for('package.list', parcel_locker_id=parcel_locker.id) }}"
           class="btn btn-sm btn-primary"
           >Csomagok megtekintése</a
         >

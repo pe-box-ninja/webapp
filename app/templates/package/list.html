@@ -3,8 +3,10 @@
 
 {% block content %}
 <div class="container mt-4">
-    {% if warehouse_id and warehouse %}
+    {% if warehouse %}
         <h1 class="mb-4">{{ warehouse.name }} raktár csomagjai</h1>
+    {% elif parcel_locker %}
+        <h1 class="mb-4">{{ parcel_locker.location }} csomagautomata csomagjai</h1>
     {% else %}
         <h1 class="mb-4">Csomagok</h1>
     {% endif %}
@@ -35,7 +37,7 @@
                 <button type="submit" class="btn btn-primary">Keresés</button>
             </form>
         </div>
-        {% if not warehouse_id and current_user.is_admin() %}
+        {% if not parcel_locker_id and not warehouse_id and current_user.is_admin() %}
         <div class="col-md-4">
             <a href="{{ url_for('package.create') }}" class="btn btn-success">Csomagküldés</a>
         </div>
