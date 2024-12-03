@@ -17,65 +17,19 @@ bp = Blueprint("warehouse", __name__)
 def list():
     warehouses = Warehouse.query.all()
     return render_template(
-        "warehouse/warehouses_list.html", title="Raktárak", warehouses=warehouses, current_user=current_user
+        "warehouse/warehouses_list.html",
+        title="Raktárak",
+        warehouses=warehouses,
+        current_user=current_user,
     )
+
 
 @bp.route("warehouse/show_packages_inside_warehouse/<id>")
 @login_required
 @warehouse_required
 def show_packages_inside_warehouse(id):
-    
-    status_filter = request.args.get("status", "all")
-    search_query = request.args.get("search", "")
+    return redirect(url_for("package.list", warehouse_id=id))
 
-    query = Package.query
-
-    if status_filter != "all":
-        query = query.filter(Package.status == status_filter)
-
-    if search_query:
-        query = query.filter(
-            or_(
-                Package.tracking_number.ilike(f"%{search_query}%"),
-                Package.sender_address.ilike(f"%{search_query}%"),
-                Package.recipient_address.ilike(f"%{search_query}%"),
-            )
-        )
-
-    packages = query.all()
-
-    warehouse = Warehouse.query.get_or_404(id)
-    assignments_query = Assignment.query
-    assignments = assignments_query.all()
-
-
-    warehouse_packages=[]
-
-    for assignment in assignments:
-        if assignment.warehouse_id==warehouse.id:
-            package_id=assignment.package_id
-            package=Package.query.get_or_404(package_id)
-            if package.status != "kézbesítve":
-                warehouse_packages.append(package)
-
-    warehouse_package_with_search_and_status=[]
-
-    intersectionset=set(packages).intersection(warehouse_packages)
-
-    for item in intersectionset:
-        warehouse_package_with_search_and_status.append(item)
-
-
-    return render_template(
-        "warehouse/show_packages_inside_warehouse.html", 
-        title="Raktárban lévő csomagok megtekintése", 
-        warehouse=warehouse, 
-        warehouse_package_with_search_and_status=warehouse_package_with_search_and_status,
-        warehouse_package_with_search_and_status_length=len(warehouse_package_with_search_and_status),
-        current_filter=status_filter,
-        search_query=search_query,
-        PackageStatus=PackageStatus
-    )
 
 @bp.route("/create", methods=["GET", "POST"])
 @login_required
@@ -93,7 +47,9 @@ def create():
         db.session.commit()
         flash("Sikeres raktárfelvétel!", "success")
         return redirect(url_for("warehouse.list"))
-    return render_template("warehouse/create.html", title="Új raktár hozzáadása", form=form)
+    return render_template(
+        "warehouse/create.html", title="Új raktár hozzáadása", form=form
+    )
 
 
 @bp.route("/edit/<int:id>", methods=["GET", "POST"])
@@ -108,6 +64,8 @@ def edit(id):
         flash("A raktár sikeresen frissítve!", "success")
         return redirect(url_for("warehouse.list"))
     return render_template(
-        "warehouse/edit.html", title="Raktár szerkesztése", form=form, warehouse=warehouse
+        "warehouse/edit.html",
+        title="Raktár szerkesztése",
+        form=form,
+        warehouse=warehouse,
     )
-
