@@ -81,7 +81,7 @@
                         {% for package in packages %}
                         <tr>
                             <td class="small">{{ package.id }}</td>
-                            <td class="small">{{ package.tracking_number }}</td>
+                            <td class="small font-weight-bold">{{ package.tracking_number }}</td>
                             <td>
                                 <span class="badge px-2 py-1 badge-{{ {'függőben': 'warning', 'szállítás alatt': 'primary', 'kézbesítve': 'success', 'visszaküldve': 'danger'}[package.status] }}">
                                     {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[package.status] }}

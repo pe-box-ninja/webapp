@@ -47,7 +47,7 @@ content %} {% if current_user.is_admin() %}
           {% for parcel_locker in parcel_lockers %}
           <tr>
             <td class="small">{{ parcel_locker.location }}</td>
-            <td class="small">{{ parcel_locker.address }}</td>
+            <td class="small font-weight-bold">{{ parcel_locker.address }}</td>
             <td class="small">{{ parcel_locker.total_compartments }}</td>
             <td class="small">{{ parcel_locker.available_compartments }}</td>
             <td>
