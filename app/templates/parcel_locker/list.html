@@ -38,18 +38,36 @@ content %} {% if current_user.is_admin() %}
             </th>
             <th scope="col" class="small">
               <i class="fa-solid fa-box mr-1"></i>
-              Szabad fiókok
+              Elérhető
+            </th>
+            <th scope="col" class="small">
+              <i class="fa-solid fa-weight-scale mr-1"></i>
+              Terhelés
             </th>
             <th scope="col" class="small">Műveletek</th>
           </tr>
         </thead>
         <tbody>
-          {% for parcel_locker in parcel_lockers %}
+          {% for parcel_locker in parcel_lockers %} {% set load_percentage = (
+          (parcel_locker.available_compartments /
+          parcel_locker.total_compartments * 100)) | round %}
           <tr>
             <td class="small">{{ parcel_locker.location }}</td>
             <td class="small font-weight-bold">{{ parcel_locker.address }}</td>
             <td class="small">{{ parcel_locker.total_compartments }}</td>
             <td class="small">{{ parcel_locker.available_compartments }}</td>
+            <td class="small">
+              <div class="progress" style="height: 20px">
+                <div
+                  class="progress-bar {{ 'bg-warning' if load_percentage >= 50 else 'bg-success' }}"
+                  role="progressbar"
+                  style="width: {{ load_percentage }}%"
+                  aria-valuenow="{{ load_percentage }}"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                ></div>
+              </div>
+            </td>
             <td>
               <div class="btn-group" role="group">
                 <a

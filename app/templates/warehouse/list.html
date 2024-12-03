@@ -36,6 +36,10 @@ content %}
                 Kapacitás
               </th>
               <th scope="col" class="small">
+                <i class="fa-solid fa-box mr-1"></i>
+                Csomagok
+              </th>
+              <th scope="col" class="small">
                 <i class="fa-solid fa-weight-scale mr-1"></i>
                 Terhelés
               </th>
@@ -43,12 +47,37 @@ content %}
             </tr>
           </thead>
           <tbody>
-            {% for warehouse in warehouses %}
-            <tr>
-              <td class="small">{{ warehouse.name }}</td>
+            {% for warehouse in warehouses %} {% set load_percentage =
+            (warehouse.current_load / warehouse.capacity * 100) | round %}
+            <tr class="{{ 'high-load' if load_percentage >= 50 else '' }}">
+              <td class="small">
+                {% if load_percentage >= 50 %}
+                <div class="d-flex align-items-center">
+                  <div class="load-indicator high mr-2"></div>
+                  {{ warehouse.name }}
+                </div>
+                {% else %}
+                <div class="d-flex align-items-center">
+                  <div class="load-indicator normal mr-2"></div>
+                  {{ warehouse.name }}
+                </div>
+                {% endif %}
+              </td>
               <td class="small font-weight-bold">{{ warehouse.address }}</td>
               <td class="small">{{ warehouse.capacity }}</td>
               <td class="small">{{ warehouse.current_load }}</td>
+              <td class="small">
+                <div class="progress" style="height: 20px">
+                  <div
+                    class="progress-bar {{ 'bg-warning' if load_percentage >= 50 else 'bg-success' }}"
+                    role="progressbar"
+                    style="width: {{ load_percentage }}%"
+                    aria-valuenow="{{ load_percentage }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+                </div>
+              </td>
               <td>
                 <div class="btn-group" role="group">
                   <a
@@ -73,4 +102,44 @@ content %}
     </div>
   </div>
 </div>
+
+<style>
+  .load-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .load-indicator.normal {
+    background-color: #28a745;
+  }
+
+  .load-indicator.high {
+    background-color: #ffc107;
+  }
+
+  .progress {
+    background-color: #e9ecef;
+    border-radius: 4px;
+  }
+
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.8rem;
+    transition: width 0.6s ease;
+  }
+
+  .high-load {
+    background-color: rgba(255, 193, 7, 0.05);
+  }
+
+  .card-header h5 {
+    color: #333;
+    font-weight: 500;
+  }
+</style>
 {% endblock %}
