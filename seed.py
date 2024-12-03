@@ -77,7 +77,7 @@ def seed_packages(num_packages=100):
     statuses = PackageStatus.list()
     for tracking_number in range(num_packages):
         package = Package(
-            tracking_number=f"bn{tracking_number}",
+            tracking_number=f"BN{tracking_number}",
             status=random.choice(statuses),
             weight=round(random.uniform(0.1, 20.0), 2),
             dimensions=f"{random.randint(1, 100)}x{random.randint(1, 100)}x{random.randint(1, 100)}",
