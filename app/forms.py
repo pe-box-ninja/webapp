@@ -91,7 +91,7 @@ class CreatePackageForm(FlaskForm):
     tracking_number = StringField(
         "Nyomkövetési szám",
         validators=[DataRequired()],
-        default=f"bn{fake.unique.random_int(min=100000, max=999999)}",
+        default=f"BN{fake.unique.random_int(min=100000, max=999999)}",
     )
     status = SelectField(
         "Státusz",
@@ -102,8 +102,13 @@ class CreatePackageForm(FlaskForm):
     dimensions = StringField("Méretek (cm)", validators=[DataRequired()])
     sender_address = StringField("Feladó címe", validators=[DataRequired()])
     recipient_address = StringField("Címzett címe", validators=[DataRequired()])
-    delivery_deadline = DateField("Kézbesítési határidő", validators=[DataRequired()])
-    submit = SubmitField("Csomag létrehozása")
+    delivery_deadline = DateField(
+        "Kézbesítési határidő",
+        validators=[
+            DataRequired("Kézbesítési határidő megadása kötelező"),
+        ],
+    )
+    submit = SubmitField("✓ Csomagküldés")
 
 
 class CreateWarehouseForm(FlaskForm):
