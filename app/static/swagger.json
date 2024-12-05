@@ -15,6 +15,41 @@
     "/package/list": {
       "get": {
         "summary": "Get all packages",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter packages by status",
+            "schema": {
+              "type": "string",
+              "default": "all"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search query for packages",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "warehouse_id",
+            "in": "query",
+            "description": "Filter by warehouse ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "parcel_locker_id",
+            "in": "query",
+            "description": "Filter by parcel locker ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of packages",
@@ -28,6 +63,475 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/package/create": {
+      "post": {
+        "summary": "Create a new package",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Package"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Package created successfully"
+          }
+        }
+      }
+    },
+    "/package/view/{id}": {
+      "get": {
+        "summary": "Get package details by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Package details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Package"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/package/track": {
+      "post": {
+        "summary": "Track a package by tracking number",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tracking_number": {
+                    "type": "string"
+                  }
+                },
+                "required": ["tracking_number"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Package tracking information"
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/package/edit/{id}": {
+      "post": {
+        "summary": "Edit package details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Package"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Package updated successfully"
+          },
+          "404": {
+            "description": "Package not found"
+          }
+        }
+      }
+    },
+    "/courier/list": {
+      "get": {
+        "summary": "Get all couriers",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter couriers by status",
+            "schema": {
+              "type": "string",
+              "default": "all"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of couriers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Courier"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courier/view/{id}": {
+      "get": {
+        "summary": "Get courier details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Courier details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Courier"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Courier not found"
+          }
+        }
+      }
+    },
+    "/courier/create": {
+      "post": {
+        "summary": "Create a new courier",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Courier"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Courier created successfully"
+          }
+        }
+      }
+    },
+    "/courier/edit/{id}": {
+      "post": {
+        "summary": "Edit courier details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Courier"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Courier updated successfully"
+          },
+          "404": {
+            "description": "Courier not found"
+          }
+        }
+      }
+    },
+    "/courier/assign_packages": {
+      "post": {
+        "summary": "Assign packages to couriers",
+        "responses": {
+          "200": {
+            "description": "Packages assigned successfully"
+          }
+        }
+      }
+    },
+    "/courier/optimal_path": {
+      "get": {
+        "summary": "Get optimal delivery path for couriers",
+        "responses": {
+          "200": {
+            "description": "Optimal route calculated successfully"
+          }
+        }
+      }
+    },
+    "/warehouse/list": {
+      "get": {
+        "summary": "Get all warehouses",
+        "responses": {
+          "200": {
+            "description": "List of warehouses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Warehouse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/warehouse/create": {
+      "post": {
+        "summary": "Create a new warehouse",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Warehouse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Warehouse created successfully"
+          }
+        }
+      }
+    },
+    "/warehouse/edit/{id}": {
+      "post": {
+        "summary": "Edit warehouse details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Warehouse"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Warehouse updated successfully"
+          },
+          "404": {
+            "description": "Warehouse not found"
+          }
+        }
+      }
+    },
+    "/parcel_locker/list": {
+      "get": {
+        "summary": "Get all parcel lockers",
+        "responses": {
+          "200": {
+            "description": "List of parcel lockers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ParcelLocker"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/parcel_locker/create": {
+      "post": {
+        "summary": "Create a new parcel locker",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParcelLocker"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Parcel locker created successfully"
+          }
+        }
+      }
+    },
+    "/parcel_locker/edit/{id}": {
+      "post": {
+        "summary": "Edit parcel locker details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ParcelLocker"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Parcel locker updated successfully"
+          },
+          "404": {
+            "description": "Parcel locker not found"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "remember_me": {
+                    "type": "boolean"
+                  }
+                },
+                "required": ["username", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "summary": "User logout",
+        "responses": {
+          "200": {
+            "description": "Logout successful"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "User registration",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": ["username", "email", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registration successful"
           }
         }
       }
@@ -47,6 +551,92 @@
           "status": {
             "type": "string",
             "enum": ["pending", "in_transit", "return", "delivered"]
+          },
+          "weight": {
+            "type": "number",
+            "format": "float"
+          },
+          "dimensions": {
+            "type": "string"
+          },
+          "sender_address": {
+            "type": "string"
+          },
+          "recipient_address": {
+            "type": "string"
+          },
+          "delivery_deadline": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Courier": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "current_location": {
+            "type": "string"
+          },
+          "working_hours": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "integer"
+          }
+        }
+      },
+      "Warehouse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "capacity": {
+            "type": "integer"
+          },
+          "current_load": {
+            "type": "integer"
+          }
+        }
+      },
+      "ParcelLocker": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "location": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "total_compartments": {
+            "type": "integer"
+          },
+          "available_compartments": {
+            "type": "integer"
           }
         }
       }
