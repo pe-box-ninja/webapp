@@ -1,10 +1,23 @@
-from flask import Blueprint, render_template, redirect, url_for, abort
+from flask import (
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    abort,
+    send_from_directory,
+)
 from flask_login import login_required, current_user
 from app.models import User
 from app.decorators import admin_required
 from app.algo_viz import simulate_delivery
+import os
 
 bp = Blueprint("main", __name__)
+
+
+@bp.route("/static/<path:path>")
+def send_static(path):
+    return send_from_directory("static", path)
 
 
 @bp.route("/")

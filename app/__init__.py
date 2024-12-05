@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_swagger_ui import get_swaggerui_blueprint
 from config import Config
 
 db = SQLAlchemy()
@@ -10,6 +11,15 @@ migrate = Migrate()
 login = LoginManager()
 login.login_view = "auth.login"
 mail = Mail()
+
+# Swagger configuration
+SWAGGER_URL = "/api/docs"
+API_URL = "/swagger.json"
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={"app_name": "BoxNinja API", "defaultModelsExpandDepth": -1},
+)
 
 
 def create_app(config_class=Config):
@@ -20,6 +30,9 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login.init_app(app)
     mail.init_app(app)
+
+    # Register Swagger UI blueprint
+    app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
     from app.routes import (
         main,
@@ -32,6 +45,7 @@ def create_app(config_class=Config):
         admin,
         service,
         cdn,
+        swagger,
     )
 
     app.register_blueprint(main.bp, url_prefix="/")
@@ -44,6 +58,7 @@ def create_app(config_class=Config):
     app.register_blueprint(user.bp, url_prefix="/user")
     app.register_blueprint(service.bp, url_prefix="/service")
     app.register_blueprint(cdn.bp, url_prefix="/cdn")
+    app.register_blueprint(swagger.bp)
 
     return app
 
