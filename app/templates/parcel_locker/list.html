@@ -1,11 +1,11 @@
 {% extends "base.html" %} {% from "design-system.html" import icon %}{% block
-content %} {% if current_user.is_admin() %}
+content %}
 <div class="col-md-4">
   <h1 class="mb-4 heading-1">
     <i class="fa-solid fa-door-closed mr-1"></i>
     Csomagautomaták
   </h1>
-
+  {% if current_user.is_admin() %}
   <div class="form-inline">
     <a
       href="{{ url_for('parcel_locker.create') }}"
@@ -15,8 +15,8 @@ content %} {% if current_user.is_admin() %}
       Hozzáadás</a
     >
   </div>
+  {% endif %}
 </div>
-{% endif %}
 
 <div class="card shadow-sm mt-4">
   <div class="card-body p-0">

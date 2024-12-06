@@ -62,7 +62,7 @@ def create():
                     courier_id=random.choice(couriers).id,
                     warehouse_id=warehouse.id,
                     parcel_locker_id=0,
-                    status=PackageStatus.IN_PROGRESS,
+                    status=PackageStatus.IN_TRANSIT,
                     assigned_at=fake.date_time_this_year(),
                     completed_at=fake.date_time_this_year(),
                 )
@@ -94,7 +94,7 @@ def create():
                         courier_id=random.choice(couriers).id,
                         warehouse_id=0,
                         parcel_locker_id=parcel_locker.id,
-                        status=PackageStatus.IN_PROGRESS,
+                        status=PackageStatus.IN_TRANSIT,
                         assigned_at=fake.date_time_this_year(),
                         completed_at=fake.date_time_this_year(),
                     )
