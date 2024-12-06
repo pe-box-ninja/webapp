@@ -7,6 +7,8 @@ from app.models import (
     ParcelLocker,
     Assignment,
     PackageStatus,
+    CourierStatus,
+    AssignmentStatus,
 )
 from faker import Faker
 import random
@@ -93,7 +95,7 @@ def get_random_status():
     r = random.random()
     if r < 0.1:
         return PackageStatus.RETURN
-    elif r < 0.5:
+    elif r < 0.3:
         return PackageStatus.DELIVERED
     else:
         return (
@@ -123,6 +125,44 @@ def seed_users(num_users=50):
         test_user.set_password(MASTER_PASSWORD)
         db.session.add(test_user)
 
+    user = User.query.filter_by(username="futar").first()
+    seed_courier_email = f"823z4e98hdf97shdf97hsd89fh3@boxninja_admin.com"
+
+    courier = Courier(
+        name="Seed Futár",
+        email=seed_courier_email,
+        phone=fake.phone_number(),
+        status=CourierStatus.ACTIVE,
+        current_location=get_address_with_city()[0],
+        working_hours=f"{random.randint(6, 10)}:00 - {random.randint(14, 20)}:00",
+        capacity=round(random.uniform(50, 200), 2),
+    )
+    db.session.add(courier)
+    courier = Courier.query.filter_by(email=user.email).first()
+
+    tracking_number = f"BN{fake.unique.random_int(min=1000, max=99999)}"
+    package = Package(
+        tracking_number=tracking_number,
+        status=get_random_status(),
+        weight=round(random.uniform(0.1, 20.0), 2),
+        dimensions=f"{random.randint(1, 100)}x{random.randint(1, 100)}x{random.randint(1, 100)}",
+        sender_address=get_random_address("sender"),
+        recipient_address=get_random_address("recipient"),
+        delivery_deadline=fake.future_date(end_date="+30d"),
+        created_at=fake.date_time_this_year(),
+        updated_at=fake.date_time_this_year(),
+    )
+    db.session.add(package)
+    package = Package.query.filter_by(tracking_number=tracking_number).first()
+
+    assignment = Assignment(
+        package_id=package.id,
+        courier_id=user.id,
+        status=str(AssignmentStatus.ASSIGNED),
+        assigned_at=fake.date_time_this_year(),
+    )
+    db.session.add(assignment)
+
     for _ in range(num_users):
         username = f"{fake.user_name()}_{random.randint(1000, 9999)}"
         email = (
@@ -135,6 +175,7 @@ def seed_users(num_users=50):
         )
         user.set_password(MASTER_PASSWORD)
         db.session.add(user)
+
     db.session.commit()
 
 
@@ -156,7 +197,7 @@ def seed_packages(num_packages=500):
 
 
 def seed_couriers(num_couriers=20):
-    statuses = ["available", "on_delivery", "off_duty"]
+    statuses = CourierStatus.list()
     city2number = {}
 
     for _ in range(num_couriers):
@@ -256,7 +297,7 @@ def seed_assignments(num_assignments=150):
     couriers = Courier.query.all()
     warehouses = Warehouse.query.all()
     lockers = ParcelLocker.query.all()
-    statuses = ["assigned", "in_progress", "completed"]
+    statuses = AssignmentStatus.list()
 
     # Reset counters
     for warehouse in warehouses:
@@ -371,9 +412,6 @@ def seed_assignments(num_assignments=150):
                 packages.remove(package)
             else:
                 # No space left anywhere
-                print(
-                    f"Warning: Could not assign package {package.id} - no space available"
-                )
                 break
 
     # Verify and update counters based on actual assignments

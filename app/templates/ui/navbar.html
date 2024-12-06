@@ -49,7 +49,7 @@
           </a>
         </li>
 
-        {% if not current_user.is_admin() %}
+        {% if current_user.is_admin() %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('courier.list') }}">
             <i class="fas fa-truck mr-1"></i>
@@ -70,6 +70,13 @@
           <a class="nav-link" href="{{ url_for('courier.assign_packages') }}">
             <i class="fa-solid fa-boxes-packing"></i>
             Csomagok felvétele
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('courier.my_packages') }}">
+            <i class="fa-solid fa-boxes-packing"></i>
+            Csomagjaim
           </a>
         </li>
 

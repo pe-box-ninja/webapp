@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, flash, request
 from flask_login import login_required
 from flask import redirect, url_for
-from app.models import Courier, CourierStatus, Package
+from app.models import Courier, CourierStatus, Package, PackageStatus, Assignment
 from app import db
 from app.decorators import warehouse_required
 from app.forms import CreateCourierForm, EditCourierForm
-from app.routes.algo import a_star_route_optimization
-from app.routes.coordinates import get_coordinates
+from app.lib.algo import a_star_route_optimization
+from app.lib.coordinates import get_coordinates
+from flask_login import current_user
 
 bp = Blueprint("courier", __name__)
 
@@ -56,15 +57,15 @@ def create():
     if form.validate_on_submit():
         courier = Courier(
             id=form.id.data,
-        status = form.status.data,
-        name = form.name.data,
-        email = form.email.data,
-        phone = form.phone.data,
-        current_location = form.current_location.data,
-        working_hours = form.working_hours.data,
-        capacity = int(form.capacity.data),
-        created_at = form.created_at.data,
-        updated_at = form.updated_at.data
+            status=form.status.data,
+            name=form.name.data,
+            email=form.email.data,
+            phone=form.phone.data,
+            current_location=form.current_location.data,
+            working_hours=form.working_hours.data,
+            capacity=int(form.capacity.data),
+            created_at=form.created_at.data,
+            updated_at=form.updated_at.data,
         )
         db.session.add(courier)
         db.session.commit()
@@ -73,12 +74,32 @@ def create():
     return render_template("courier/create.html", title="Futár létrehozása", form=form)
 
 
+@bp.route("/my_packages", methods=["GET", "POST"])
+@login_required
+@warehouse_required
+def my_packages():
+    courier = Courier.query.filter_by(id=current_user.id).first()
+    assignments = (Assignment.query.filter_by(courier_id=courier.id).all())[:]
+    packages = [
+        p
+        for p in (Package.query.order_by(Package.weight.asc()).all())
+        if p.id in [assignment.package_id for assignment in assignments]
+    ]
+    return render_template(
+        "courier/my_packages.html", title="Csomagjaim", packages=packages
+    )
+
+
 @bp.route("/assign_packages", methods=["GET", "POST"])
 @login_required
 @warehouse_required
 def assign_packages():
-    couriers = Courier.query.filter_by(status="active").all()
-    packages = Package.query.filter_by(status="függőben").order_by(Package.weight.asc()).all()
+    couriers = Courier.query.filter_by(status=CourierStatus.ACTIVE).all()
+    packages = (
+        Package.query.filter_by(status=PackageStatus.PENDING)
+        .order_by(Package.weight.asc())
+        .all()
+    )
 
     if not couriers:
         flash("Nincsenek elérhető futárok!", "warning")
@@ -99,16 +120,17 @@ def assign_packages():
                 # Assign package to the courier
                 assigned_packages.append(package)
                 available_capacity -= package.weight
-                package.status = "szállítás alatt"
+                package.status = PackageStatus.PENDING
                 package.courier_id = courier.id
-
 
                 packages.remove(package)
 
-        assignments.append({
-            "courier": courier,
-            "packages": assigned_packages,
-        })
+        assignments.append(
+            {
+                "courier": courier,
+                "packages": assigned_packages,
+            }
+        )
 
     db.session.commit()
 
@@ -125,40 +147,39 @@ def assign_packages():
 @login_required
 @warehouse_required
 def optimal_path():
-    couriers = Courier.query.filter_by(status="active").all()
+    couriers = Courier.query.filter_by(status=CourierStatus.ACTIVE).all()
     assignments = []
 
-    addresses = [{
-        "address": "Veszprém, Egyetem utca 10",
-        "lat": get_coordinates("Veszprém, Egyetem utca 10")[0],
-        "lon": get_coordinates("Veszprém, Egyetem utca 10")[1]
-    }]
+    addresses = [
+        {
+            "address": "Veszprém, Egyetem utca 10",
+            "lat": get_coordinates("Veszprém, Egyetem utca 10")[0],
+            "lon": get_coordinates("Veszprém, Egyetem utca 10")[1],
+        }
+    ]
 
-    packages = Package.query.filter_by(status="szállítás alatt").all()
+    packages = Package.query.filter_by(status=PackageStatus.PENDING).all()
 
     for package in packages:
         recipient_address = package.recipient_address
         lat, lon = get_coordinates(recipient_address)
 
         if lat is not None and lon is not None:
-            addresses.append({
-                "address": recipient_address,
-                "lat": lat,
-                "lon": lon
-            })
+            addresses.append({"address": recipient_address, "lat": lat, "lon": lon})
         else:
-            flash(f"Nem sikerült feldolgozni a következő címet: {recipient_address}", "warning")
+            flash(
+                f"Nem sikerült feldolgozni a következő címet: {recipient_address}",
+                "warning",
+            )
 
     optimal_route, step_info = a_star_route_optimization(addresses, start_index=0)
-    assignments.append({
-        "courier": Courier.name,
-        "route": optimal_route,
-        "steps": step_info
-    })
-
+    assignments.append(
+        {"courier": Courier.name, "route": optimal_route, "steps": step_info}
+    )
 
     return render_template(
         "courier/optimal_path.html",
         title="Optimális útvonal meghatározása",
-        addresses=addresses, assignments=assignments
+        addresses=addresses,
+        assignments=assignments,
     )
