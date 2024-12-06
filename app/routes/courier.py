@@ -82,31 +82,11 @@ def my_packages():
     assignments = (Assignment.query.filter_by(courier_id=courier.id).all())[:]
     packages = [
         p
-        for p in (
-            Package.query.filter_by(status=PackageStatus.PENDING)
-            .order_by(Package.weight.asc())
-            .all()
-        )
+        for p in (Package.query.order_by(Package.weight.asc()).all())
         if p.id in [assignment.package_id for assignment in assignments]
     ]
-
-    available_capacity = courier.capacity
-    assigned_packages = []
-
-    for package in packages[:]:
-        if package.weight <= available_capacity:
-            assigned_packages.append(package)
-            available_capacity -= package.weight
-            package.status = PackageStatus.PENDING
-            package.courier_id = courier.id
-            packages.remove(package)
-
-    my_assignments = {
-        "courier": courier,
-        "packages": assigned_packages,
-    }
     return render_template(
-        "courier/my_packages.html", title="Csomagjaim", assignments=my_assignments
+        "courier/my_packages.html", title="Csomagjaim", packages=packages
     )
 
 

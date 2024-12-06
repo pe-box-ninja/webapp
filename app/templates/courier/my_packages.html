@@ -1,22 +1,60 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}{% from "design-system.html" import icon %} {% block
+content %}
 <div class="container mt-4">
-  <h1>{{ title }}</h1>
+  <h1 class="mb-4 heading-1">{{ icon('box') }} {{ title }}</h1>
 
-  <h2>Feladatok:</h2>
-  {% for assignment in assignments %}
-  <div class="card mb-3">
-    <div class="card-body">
-      {% if assignment.packages %}
-      <ul>
-        {% for package in assignment.packages %}
-        <li>Csomag: {{ package.id }} (Súly: {{ package.weight }} kg)</li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <p>Nincs kiosztott csomag.</p>
-      {% endif %}
+  <div class="card shadow-sm">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th scope="col" class="small">
+                {{ icon('barcode') }} Nyomkövetési szám
+              </th>
+              <th scope="col" class="small">{{ icon('box') }} Státusz</th>
+              <th scope="col" class="small">{{ icon('weight-scale') }} Súly</th>
+              <th scope="col" class="small">Műveletek</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for package in packages %}
+            <tr>
+              <td class="small font-weight-bold">
+                {{ package.tracking_number }}
+              </td>
+              <td>
+                <span
+                  class="badge px-2 py-1 badge-{{ {'függőben': 'warning', 'szállítás alatt': 'primary', 'kézbesítve': 'success', 'visszaküldve': 'danger'}[package.status] }}"
+                >
+                  {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás
+                  alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve':
+                  'Visszaküldve'}[package.status] }}
+                </span>
+              </td>
+              <td class="small">{{ package.weight }} kg</td>
+              <td>
+                <div class="btn-group" role="group">
+                  <a
+                    href="{{ url_for('package.view', id=package.id) }}"
+                    class="btn btn-sm btn-primary"
+                  >
+                    Megtekintés</a
+                  >
+                  <a
+                    href="{{ url_for('package.edit', id=package.id) }}"
+                    class="btn btn-sm btn-secondary"
+                  >
+                    Szerkesztés</a
+                  >
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-  {% endfor %}
 </div>
 {% endblock %}
