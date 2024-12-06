@@ -78,7 +78,7 @@
                     </thead>
                     <tbody>
                         {% for package in packages %}
-                        {% if package.status!="kézbesítve" %}
+                        {% if not warehouse_id or package.status!="kézbesítve" %}
                         <tr>
                             <td class="small font-weight-bold">{{ package.tracking_number }}</td>
                             <td>
