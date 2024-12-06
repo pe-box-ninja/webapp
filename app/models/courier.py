@@ -1,18 +1,18 @@
 from app import db
 from datetime import datetime
 
-class CourierStatus:
-    ACTIVE = "indulásra kész"
-    INACTIVE = "úton, pihen"
 
+class CourierStatus:
+    ACTIVE = "available"
+    INACTIVE = "on_delivery"
 
     @staticmethod
     def list():
-        return ["indulásra kész", "úton,pihen"]
+        return [CourierStatus.ACTIVE, CourierStatus.INACTIVE]
 
 
 class Courier(db.Model):
-    __tablename__ = 'courier'
+    __tablename__ = "courier"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -22,4 +22,6 @@ class Courier(db.Model):
     working_hours = db.Column(db.String(30))
     capacity = db.Column(db.Float)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow
+    )

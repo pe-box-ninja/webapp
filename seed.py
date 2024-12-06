@@ -7,6 +7,7 @@ from app.models import (
     ParcelLocker,
     Assignment,
     PackageStatus,
+    CourierStatus,
 )
 from faker import Faker
 import random
@@ -93,7 +94,7 @@ def get_random_status():
     r = random.random()
     if r < 0.1:
         return PackageStatus.RETURN
-    elif r < 0.5:
+    elif r < 0.3:
         return PackageStatus.DELIVERED
     else:
         return (
@@ -156,7 +157,7 @@ def seed_packages(num_packages=500):
 
 
 def seed_couriers(num_couriers=20):
-    statuses = ["available", "on_delivery", "off_duty"]
+    statuses = CourierStatus.list()
     city2number = {}
 
     for _ in range(num_couriers):

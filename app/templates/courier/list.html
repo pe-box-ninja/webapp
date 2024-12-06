@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="mb-4">Futárok</h1>
+    <h1 class="mb-4 heading-1"><i class="fas fa-truck mr-1"></i> Futárok</h1>
 
     <!-- Filters and search section -->
     <div class="row mb-4">
@@ -42,16 +42,13 @@
         <div class="card-body">
             <ul class="list-unstyled">
                 <li><span class="badge badge-success">Aktív</span> - A futár elérhető a szállításhoz</li>
-                <li><span class="badge badge-secondary">Inaktív</span> - A futár jelenleg nem dolgozik</li>
+                <li><span class="badge badge-warning">Inaktív</span> - A futár jelenleg nem dolgozik</li>
             </ul>
         </div>
     </div>
 
     <!-- Couriers Table -->
     <div class="card shadow-sm">
-        <div class="card-header">
-            Futárok listája
-        </div>
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover mb-0">
@@ -73,7 +70,7 @@
                             <td>{{ courier.phone }}</td>
                             <td>{{ courier.current_location }}</td>
                             <td>
-                                <span class="badge px-2 py-2 badge-{{ 'success' if courier.status == 'active' else 'secondary' }}">
+                                <span class="badge px-2 py-2 badge-{{ 'success' if courier.status == 'active' else 'warning' }}">
                                     {{ 'Aktív' if courier.status == 'active' else 'Inaktív' }}
                                 </span>
                             </td>

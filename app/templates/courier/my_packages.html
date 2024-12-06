@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <h1>{{ title }}</h1>
+
+  <h2>Feladatok:</h2>
+  {% for assignment in assignments %}
+  <div class="card mb-3">
+    <div class="card-body">
+      {% if assignment.packages %}
+      <ul>
+        {% for package in assignment.packages %}
+        <li>Csomag: {{ package.id }} (Súly: {{ package.weight }} kg)</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>Nincs kiosztott csomag.</p>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

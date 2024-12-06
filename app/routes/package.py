@@ -1,6 +1,13 @@
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required
-from app.models import Package, PackageStatus, Warehouse, Assignment, ParcelLocker, Courier
+from app.models import (
+    Package,
+    PackageStatus,
+    Warehouse,
+    Assignment,
+    ParcelLocker,
+    Courier,
+)
 from app.decorators import warehouse_required
 from app import db
 from app.forms import EditPackageForm, CreatePackageForm
@@ -35,75 +42,79 @@ def create():
             "success",
         )
 
-        #send the package to a warehouse or a parcel locker
+        # send the package to a warehouse or a parcel locker
 
         warehouses = Warehouse.query.all()
 
-        parcel_lockers=ParcelLocker.query.all()
+        parcel_lockers = ParcelLocker.query.all()
 
         couriers = Courier.query.all()
 
-        placed_in_warehouse=False 
-        placed_in_parcel_locker=False
+        placed_in_warehouse = False
+        placed_in_parcel_locker = False
 
         for warehouse in warehouses:
-            if warehouse.capacity>warehouse.current_load:
+            if warehouse.capacity > warehouse.current_load:
 
-                #Create assignment if there is space in a warehouse
-                assignment=Assignment(
-                package_id=package.id,
-                courier_id=random.choice(couriers).id,
-                warehouse_id=warehouse.id,
-                parcel_locker_id=0,
-                status="in_progress",
-                assigned_at=fake.date_time_this_year(),
-                completed_at=fake.date_time_this_year())
+                # Create assignment if there is space in a warehouse
+                assignment = Assignment(
+                    package_id=package.id,
+                    courier_id=random.choice(couriers).id,
+                    warehouse_id=warehouse.id,
+                    parcel_locker_id=0,
+                    status=PackageStatus.IN_PROGRESS,
+                    assigned_at=fake.date_time_this_year(),
+                    completed_at=fake.date_time_this_year(),
+                )
 
-                warehouse.current_load+=1
+                warehouse.current_load += 1
 
-                #Save it to database
+                # Save it to database
 
                 db.session.add(assignment)
                 db.session.commit()
-                
-                placed_in_warehouse=True
+
+                placed_in_warehouse = True
 
                 flash("Package sent to warehouse: " + warehouse.name)
                 break
 
+        # Check if we placed the package already->if not we need to do this to parcel lockers
 
-        #Check if we placed the package already->if not we need to do this to parcel lockers
-
-        if placed_in_warehouse==False:
+        if placed_in_warehouse == False:
             for parcel_locker in parcel_lockers:
-                if parcel_locker.total_compartments>parcel_locker.available_compartments:
+                if (
+                    parcel_locker.total_compartments
+                    > parcel_locker.available_compartments
+                ):
 
-                    #Create assignment if there is space in a warehouse
-                    assignment=Assignment(
-                    package_id=package.id,
-                    courier_id=random.choice(couriers).id,
-                    warehouse_id=0,
-                    parcel_locker_id=parcel_locker.id,
-                    status="in_progress",
-                    assigned_at=fake.date_time_this_year(),
-                    completed_at=fake.date_time_this_year(),)
+                    # Create assignment if there is space in a warehouse
+                    assignment = Assignment(
+                        package_id=package.id,
+                        courier_id=random.choice(couriers).id,
+                        warehouse_id=0,
+                        parcel_locker_id=parcel_locker.id,
+                        status=PackageStatus.IN_PROGRESS,
+                        assigned_at=fake.date_time_this_year(),
+                        completed_at=fake.date_time_this_year(),
+                    )
 
-                    warehouse.available_compartments+=1
+                    warehouse.available_compartments += 1
 
-                    #Save it to database
+                    # Save it to database
 
                     db.session.add(assignment)
                     db.session.commit()
-                
-                    placed_in_parcel_locker=True
-                    
-                    flash("Package sent to parcel locker: "+ parcel_locker.name)
+
+                    placed_in_parcel_locker = True
+
+                    flash("Package sent to parcel locker: " + parcel_locker.name)
 
                     break
 
-        #If the package is not placed in a warehouse or a parcel locker, then raise error
+        # If the package is not placed in a warehouse or a parcel locker, then raise error
 
-        if placed_in_parcel_locker==False and placed_in_warehouse==False:
+        if placed_in_parcel_locker == False and placed_in_warehouse == False:
             flash("Package can't be placed in our warehouses/parcel_lockers!")
 
         if current_user.is_authenticated:
@@ -122,7 +133,7 @@ def create():
         tracking_number=unique_tracking_number,
     )
 
-    #Nyomkövetési szám: BN928544
+    # Nyomkövetési szám: BN928544
 
 
 @bp.route("/list")
