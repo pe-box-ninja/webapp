@@ -190,7 +190,7 @@ class EditCourierForm(FlaskForm):
     id = IntegerField("Azonosító", render_kw={"readonly": True})
     status = SelectField(
         "Státusz",
-        choices=[("active", "Aktív"), ("inactive", "Inaktív")],
+        choices=[(status, status) for status in CourierStatus.list()],
         validators=[DataRequired()],
     )
     name = StringField("Név", validators=[DataRequired(), Length(max=100)])

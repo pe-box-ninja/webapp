@@ -91,16 +91,15 @@ def get_random_address(type=None):
         return random.choice(VESZPREM_ADDRESSES)
 
 
-def get_random_status():
+def get_random_status(no_done: bool = False):
     r = random.random()
-    if r < 0.1:
-        return PackageStatus.RETURN
-    elif r < 0.3:
-        return PackageStatus.DELIVERED
-    else:
-        return (
-            PackageStatus.PENDING if random.random() > 0.5 else PackageStatus.IN_TRANSIT
-        )
+    if no_done:
+        if r < 0.1:
+            return PackageStatus.RETURN
+        elif r < 0.3:
+            return PackageStatus.DELIVERED
+
+    return PackageStatus.PENDING if random.random() > 0.5 else PackageStatus.IN_TRANSIT
 
 
 def seed_users(num_users=50):
@@ -132,7 +131,11 @@ def seed_users(num_users=50):
         name="Seed Futár",
         email=seed_courier_email,
         phone=fake.phone_number(),
-        status=CourierStatus.ACTIVE,
+        status=(
+            CourierStatus.AVAILABLE
+            if random.random() > 0.2
+            else CourierStatus.ON_DELIVERY
+        ),
         current_location=get_address_with_city()[0],
         working_hours=f"{random.randint(6, 10)}:00 - {random.randint(14, 20)}:00",
         capacity=round(random.uniform(50, 200), 2),
@@ -143,7 +146,7 @@ def seed_users(num_users=50):
     tracking_number = f"BN{fake.unique.random_int(min=1000, max=99999)}"
     package = Package(
         tracking_number=tracking_number,
-        status=get_random_status(),
+        status=get_random_status(no_done=True),
         weight=round(random.uniform(0.1, 20.0), 2),
         dimensions=f"{random.randint(1, 100)}x{random.randint(1, 100)}x{random.randint(1, 100)}",
         sender_address=get_random_address("sender"),
@@ -183,7 +186,7 @@ def seed_packages(num_packages=500):
     for tracking_number in range(num_packages):
         package = Package(
             tracking_number=f"BN{fake.unique.random_int(min=1000, max=99999)}",
-            status=get_random_status(),
+            status=get_random_status(no_done=False),
             weight=round(random.uniform(0.1, 20.0), 2),
             dimensions=f"{random.randint(1, 100)}x{random.randint(1, 100)}x{random.randint(1, 100)}",
             sender_address=get_random_address("sender"),
