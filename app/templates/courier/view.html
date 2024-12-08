@@ -1,32 +1,44 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container mt-4">
-    <h1 class="mb-4">Futár információk</h1>
+  <h1 class="mb-4">Futár információk</h1>
 
-    <div class="card">
-        <div class="card-header">
-            {{ courier.name }} - Adatok
-        </div>
-        <div class="card-body">
-            <ul class="list-unstyled">
-                <li><strong>Név:</strong> {{ courier.name }}</li>
-                <li><strong>Email:</strong> {{ courier.email }}</li>
-                <li><strong>Telefon:</strong> {{ courier.phone }}</li>
-                <li><strong>Jelenlegi hely:</strong> {{ courier.current_location }}</li>
-                <li><strong>Státusz:</strong>
-                    <span class="badge px-2 py-2 badge-{{ 'success' if courier.status == 'active' else 'secondary' }}">
-                        {{ 'Aktív' if courier.status == 'active' else 'Inaktív' }}
-                    </span>
-                </li>
-                <li><strong>Munkaidő:</strong> {{ courier.working_hours }}</li>
-                <li><strong>Kapacitás:</strong> {{ courier.capacity }}</li>
-                <li><strong>Létrehozva:</strong> {{ courier.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</li>
-                <li><strong>Frissítve:</strong> {{ courier.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}</li>
-            </ul>
-            <a href="{{ url_for('courier.edit', id=courier.id) }}" class="btn btn-warning">Szerkesztés</a>
-            <a href="{{ url_for('courier.list') }}" class="btn btn-secondary">Vissza a listához</a>
-        </div>
+  <div class="card">
+    <div class="card-header">{{ courier.name }} - Adatok</div>
+    <div class="card-body">
+      <ul class="list-unstyled">
+        <li><strong>Név:</strong> {{ courier.name }}</li>
+        <li><strong>Email:</strong> {{ courier.email }}</li>
+        <li><strong>Telefon:</strong> {{ courier.phone }}</li>
+        <li><strong>Jelenlegi hely:</strong> {{ courier.current_location }}</li>
+        <li>
+          <strong>Státusz:</strong>
+          <span
+            class="badge px-2 py-2 badge-{{ 'success' if courier.status == 'available' else 'secondary' }}"
+          >
+            {{ 'Szállításra elérhető' if courier.status == 'available' else
+            'Jelenleg nem dolgozik' }}
+          </span>
+        </li>
+        <li><strong>Munkaidő:</strong> {{ courier.working_hours }}</li>
+        <li><strong>Kapacitás:</strong> {{ courier.capacity }}</li>
+        <li>
+          <strong>Létrehozva:</strong> {{ courier.created_at.strftime('%Y-%m-%d
+          %H:%M:%S') }}
+        </li>
+        <li>
+          <strong>Frissítve:</strong> {{ courier.updated_at.strftime('%Y-%m-%d
+          %H:%M:%S') }}
+        </li>
+      </ul>
+      <a
+        href="{{ url_for('courier.edit', id=courier.id) }}"
+        class="btn btn-warning"
+        >Szerkesztés</a
+      >
+      <a href="{{ url_for('courier.list') }}" class="btn btn-secondary"
+        >Vissza a listához</a
+      >
     </div>
+  </div>
 </div>
 {% endblock %}

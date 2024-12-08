@@ -3,12 +3,12 @@ from datetime import datetime
 
 
 class CourierStatus:
-    ACTIVE = "available"
-    INACTIVE = "on_delivery"
+    AVAILABLE = "available"
+    ON_DELIVERY = "on_delivery"
 
     @staticmethod
     def list():
-        return [CourierStatus.ACTIVE, CourierStatus.INACTIVE]
+        return [CourierStatus.AVAILABLE, CourierStatus.ON_DELIVERY]
 
 
 class Courier(db.Model):
