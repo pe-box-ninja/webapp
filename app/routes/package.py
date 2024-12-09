@@ -42,7 +42,7 @@ def create():
             "success",
         )
 
-        # send the package to a warehouse or a parcel locker
+        # Send the package to a warehouse or a parcel locker
 
         warehouses = Warehouse.query.all()
 
@@ -133,7 +133,6 @@ def create():
         tracking_number=unique_tracking_number,
     )
 
-    # Nyomkövetési szám: BN928544
 
 
 @bp.route("/list")
@@ -217,6 +216,41 @@ def edit(id):
     if form.validate_on_submit():
         form.populate_obj(package)
         db.session.commit()
+
+        #If the package status was changed to "Kézbesítve" or "Visszaküldve" we need to remove it from warehouse or parcel locker
+
+        new_package_status=package.status
+
+        #flash("new_package_status: "+str(new_package_status))
+
+        if new_package_status=="kézbesítve" or new_package_status=="visszaküldve":
+
+            assignmentforpackage=Assignment.query.filter_by(package_id=package.id).first()
+            warehouse_id=assignmentforpackage.warehouse_id
+            parcel_locker_id=assignmentforpackage.parcel_locker_id
+
+            #flash("Warehouseid: "+str(warehouse_id))
+            #flash("Parcel locker id: "+str(parcel_locker_id))
+
+            #Find which warehouse or parcel locker has our package, and increase it's capacity by 1
+
+            #Remove package from warehouse or parcel locker
+
+            if warehouse_id is None: 
+                parcel_locker = ParcelLocker.query.get_or_404(parcel_locker_id)
+                parcel_locker.available_compartments+=1
+                assignmentforpackage.parcel_locker_id=0
+                db.session.add(assignmentforpackage)
+                db.session.add(parcel_locker)
+                db.session.commit()
+                
+            else:
+                warehouse= Warehouse.query.get_or_404(warehouse_id)
+                warehouse.current_load-=1
+                assignmentforpackage.warehouse_id=0
+                db.session.add(assignmentforpackage)
+                db.session.add(warehouse)
+                db.session.commit()
         flash("A csomag sikeresen frissítve.", "success")
         return redirect(url_for("package.list"))
     return render_template(
