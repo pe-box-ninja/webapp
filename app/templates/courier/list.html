@@ -41,8 +41,8 @@
         </div>
         <div class="card-body">
             <ul class="list-unstyled">
-                <li><span class="badge badge-success">Aktív</span> - A futár elérhető a szállításhoz</li>
-                <li><span class="badge badge-warning">Inaktív</span> - A futár jelenleg nem dolgozik</li>
+                <li><span class="badge badge-success">Szállításra elérhető</span> - A futár elérhető a szállításhoz</li>
+                <li><span class="badge badge-warning">Jelenleg nem dolgozik</span> - A futár jelenleg nem dolgozik</li>
             </ul>
         </div>
     </div>
@@ -65,16 +65,16 @@
                     <tbody>
                         {% for courier in couriers %}
                         <tr>
-                            <td>{{ courier.name }}</td>
-                            <td>{{ courier.email }}</td>
-                            <td>{{ courier.phone }}</td>
-                            <td>{{ courier.current_location }}</td>
-                            <td>
-                                <span class="badge px-2 py-2 badge-{{ 'success' if courier.status == 'active' else 'warning' }}">
-                                    {{ 'Aktív' if courier.status == 'active' else 'Inaktív' }}
+                            <td class="small">{{ courier.name }}</td>
+                            <td class="small">{{ courier.email }}</td>
+                            <td class="small">{{ courier.phone }}</td>
+                            <td class="small">{{ courier.current_location }}</td>
+                            <td class="small">
+                                <span class="badge px-2 py-2 badge-{{ 'success' if courier.status == 'available' else 'warning' }}">
+                                    {{ 'Szállításra elérhető' if courier.status == 'available' else 'Jelenleg nem dolgozik' }}
                                 </span>
                             </td>
-                            <td>
+                            <td class="small">
                                 <a href="{{ url_for('courier.view', id=courier.id) }}" class="btn btn-sm btn-outline-primary">Megtekintés</a>
                                 <a href="{{ url_for('courier.edit', id=courier.id) }}" class="btn btn-sm btn-outline-secondary">Szerkesztés</a>
                             </td>

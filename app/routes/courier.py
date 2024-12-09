@@ -94,7 +94,7 @@ def my_packages():
 @login_required
 @warehouse_required
 def assign_packages():
-    couriers = Courier.query.filter_by(status=CourierStatus.ACTIVE).all()
+    couriers = Courier.query.filter_by(status=CourierStatus.AVAILABLE).all()
     packages = (
         Package.query.filter_by(status=PackageStatus.PENDING)
         .order_by(Package.weight.asc())
@@ -147,7 +147,7 @@ def assign_packages():
 @login_required
 @warehouse_required
 def optimal_path():
-    couriers = Courier.query.filter_by(status=CourierStatus.ACTIVE).all()
+    couriers = Courier.query.filter_by(status=CourierStatus.AVAILABLE).all()
     assignments = []
 
     addresses = [
