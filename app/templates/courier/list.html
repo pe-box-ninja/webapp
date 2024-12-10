@@ -12,8 +12,8 @@
                     <select name="status" class="form-control p-2">
                         <option value="all" {% if status_filter =='all' %}selected{% endif %} >
                         Összes státusz</option>
-                        <option value="active" {% if status_filter =='active' %}selected{% endif %}>Aktív</option>
-                        <option value="inactive" {% if status_filter =='inactive' %}selected{% endif %}>Inaktív</option>
+                        <option value="available" {% if status_filter =='available' %}selected{% endif %}>Szállításra elérhető</option>
+                        <option value="on_delivery" {% if status_filter =='on_delivery' %}selected{% endif %}>Jelenleg nem dolgozik</option>
                     </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Szűrés</button>

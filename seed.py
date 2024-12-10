@@ -31,10 +31,8 @@ VESZPREM_ADDRESSES = [
     "Fő utca 12., 8500 Pápa",
     "Jókai Mór utca 5., 8500 Pápa",
     "Kossuth Lajos utca 27., 8100 Várpalota",
-    "Szent István út 15., 8100 Várpalota",
     "Szabadság tér 1., 8220 Balatonalmádi",
     "Baross Gábor út 44., 8220 Balatonalmádi",
-    "Petőfi Sándor utca 11., 8230 Balatonfüred",
     "Zákonyi Ferenc utca 2., 8230 Balatonfüred",
     "Kossuth Lajos utca 14., 8420 Zirc",
 ]
@@ -57,10 +55,8 @@ RECIPIENT_ADDRESSES = [
     "Fő utca 12., 8500 Pápa",
     "Jókai Mór utca 5., 8500 Pápa",
     "Kossuth Lajos utca 27., 8100 Várpalota",
-    "Szent István út 15., 8100 Várpalota",
     "Szabadság tér 1., 8220 Balatonalmádi",
     "Baross Gábor út 44., 8220 Balatonalmádi",
-    "Petőfi Sándor utca 11., 8230 Balatonfüred",
     "Zákonyi Ferenc utca 2., 8230 Balatonfüred",
     "Kossuth Lajos utca 14., 8420 Zirc",
 ]

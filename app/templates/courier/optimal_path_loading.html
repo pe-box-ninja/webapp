@@ -1,0 +1,82 @@
+{% extends "base.html" %} {% from "design-system.html" import icon %} {% block
+content %}
+<div class="loading-container">
+  <div class="loading-content">
+    <div class="spinner-container mb-3">
+      {{ icon('spinner', size='3x', spin=true) }}
+    </div>
+    <h2 class="loading-text">Betöltés folyamatban...</h2>
+    <p class="loading-subtext">Kérjük várjon, amíg feldolgozzuk a kérését.</p>
+  </div>
+</div>
+
+<style>
+  .loading-container {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .loading-content {
+    padding: 2rem;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .spinner-container {
+    color: #8d6e63;
+  }
+
+  .loading-text {
+    color: #333333;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .loading-subtext {
+    color: #666666;
+    font-size: 1rem;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch("/courier/optimal_path_api", {
+      method: "GET",
+      headers: {
+        Accept: "text/html",
+      },
+      credentials: "same-origin",
+      timeout: 99999,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.text();
+      })
+      .then((html) => {
+        // Replace the entire content with the response
+        document.documentElement.innerHTML = html;
+
+        // Re-run any scripts that were in the new content
+        const scripts = document.getElementsByTagName("script");
+        for (let script of scripts) {
+          if (script.innerHTML) {
+            eval(script.innerHTML);
+          }
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        document.querySelector(".loading-text").textContent = "Hiba történt!";
+        document.querySelector(".loading-subtext").textContent =
+          "Kérjük, próbálja újra később.";
+        document.querySelector(".spinner-container").style.color = "#dc3545";
+      });
+  });
+</script>
+{% endblock %}
