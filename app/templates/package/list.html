@@ -92,7 +92,7 @@
                                     <a href="{{ url_for('package.view', id=package.id) }}" class="btn btn-sm btn-primary">
                                         
                                         Megtekintés</a>
-                                    {% if current_user.is_admin() %}
+                                    {% if current_user.is_admin() or current_user.is_courier() %}
                                     <a href="{{ url_for('package.edit', id=package.id) }}" class="btn btn-sm btn-secondary">
                                         
                                         Szerkesztés</a>
