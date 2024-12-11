@@ -8,6 +8,8 @@ from app.forms import CreateCourierForm, EditCourierForm
 from app.lib.algo import a_star_route_optimization
 from app.lib.coordinates import get_coordinates
 from flask_login import current_user
+from tqdm import tqdm
+
 
 bp = Blueprint("courier", __name__)
 
@@ -143,12 +145,15 @@ def assign_packages():
     )
 
 
-@bp.route("/optimal_path", methods=["GET", "POST"])
+@bp.route("/optimal_path_api", methods=["GET", "POST"])
 @login_required
 @warehouse_required
-def optimal_path():
+def optimal_path_api():
+    print("optimal_path_api")
+
     couriers = Courier.query.filter_by(status=CourierStatus.AVAILABLE).all()
     assignments = []
+    bad_addresses = []
 
     addresses = [
         {
@@ -160,7 +165,10 @@ def optimal_path():
 
     packages = Package.query.filter_by(status=PackageStatus.PENDING).all()
 
-    for package in packages:
+    for package in tqdm(packages, desc="Processing packages"):
+        if package.recipient_address in bad_addresses:
+            continue
+
         recipient_address = package.recipient_address
         lat, lon = get_coordinates(recipient_address)
 
@@ -171,6 +179,7 @@ def optimal_path():
                 f"Nem sikerült feldolgozni a következő címet: {recipient_address}",
                 "warning",
             )
+            bad_addresses.append(recipient_address)
 
     optimal_route, step_info = a_star_route_optimization(addresses, start_index=0)
     assignments.append(
@@ -183,3 +192,10 @@ def optimal_path():
         addresses=addresses,
         assignments=assignments,
     )
+
+
+@bp.route("/optimal_path", methods=["GET"])
+@login_required
+@warehouse_required
+def optimal_path():
+    return render_template("courier/optimal_path_loading.html", title="Betöltés")
