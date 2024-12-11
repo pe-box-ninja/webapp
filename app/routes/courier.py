@@ -9,6 +9,7 @@ from app.lib.algo import a_star_route_optimization
 from app.lib.coordinates import get_coordinates
 from flask_login import current_user
 from tqdm import tqdm
+from sqlalchemy import or_
 
 
 bp = Blueprint("courier", __name__)
@@ -80,15 +81,35 @@ def create():
 @login_required
 @warehouse_required
 def my_packages():
+    status_filter = request.args.get("status", "all")
+    search_query = request.args.get("search", "")
+
+    query = Package.query
+
+    if status_filter != "all":
+        query = query.filter(Package.status == status_filter)
+
+    if search_query:
+        query = query.filter(
+            or_(
+                Package.tracking_number.ilike(f"%{search_query}%"),
+                Package.sender_address.ilike(f"%{search_query}%"),
+                Package.recipient_address.ilike(f"%{search_query}%"),
+            )
+        )
+
     courier = Courier.query.filter_by(id=current_user.id).first()
     assignments = (Assignment.query.filter_by(courier_id=courier.id).all())[:]
     packages = [
         p
-        for p in (Package.query.order_by(Package.weight.asc()).all())
+        for p in (query.order_by(Package.weight.asc()).all())
         if p.id in [assignment.package_id for assignment in assignments]
     ]
     return render_template(
-        "courier/my_packages.html", title="Csomagjaim", packages=packages
+        "courier/my_packages.html",
+        title="Csomagjaim",
+        packages=packages,
+        PackageStatus=PackageStatus,
     )
 
 

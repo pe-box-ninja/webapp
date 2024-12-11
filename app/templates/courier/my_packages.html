@@ -3,6 +3,38 @@ content %}
 <div class="container mt-4">
   <h1 class="mb-4 heading-1">{{ icon('box') }} {{ title }}</h1>
 
+  <div class="row mb-4">
+    <div class="col-md-4">
+        <form action="{{ url_for('courier.my_packages') }}" method="get">
+            <div class="input-group">
+                <select name="status" class="form-control p-1">
+                    <option value="all" {% if current_filter == 'all' %}selected{% endif %}>Összes státusz</option>
+                    {% for status in PackageStatus.list() %}
+                        {% if not warehouse_id or status != "kézbesítve" %}
+                            <option value="{{ status }}" {% if current_filter == status %}selected{% endif %}>
+                                {{ {'függőben': 'Függőben', 'szállítás alatt': 'Szállítás alatt', 'kézbesítve': 'Kézbesítve', 'visszaküldve': 'Visszaküldve'}[status] }}
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Szűrés</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <form action="{{ url_for('package.list', warehouse_id=warehouse_id) }}" method="get">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Keresés..." value="{{ search_query }}">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Keresés</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
   <div class="card shadow-sm">
     <div class="card-body p-0">
       <div class="table-responsive">
